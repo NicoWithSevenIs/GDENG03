@@ -3,6 +3,7 @@
 #include "../Game Engine/Window/Window.h"
 #include "../Game Engine/Graphics Engine/GraphicsEngine.h"
 #include "../Game Engine/Graphics Engine/SwapChain/SwapChain.h"
+#include "../Game Engine/Graphics Engine/DeviceContext/DeviceContext.h"
 
 class AppWindow : public Window {
 	
