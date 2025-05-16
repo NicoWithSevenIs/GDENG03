@@ -131,11 +131,13 @@
     <ClCompile Include="App\AppWindow.cpp" />
     <ClCompile Include="App\main.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\GraphicsEngine.cpp" />
+    <ClCompile Include="Game Engine\Graphics Engine\SwapChain\SwapChain.cpp" />
     <ClCompile Include="Game Engine\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\AppWindow.h" />
     <ClInclude Include="Game Engine\Graphics Engine\GraphicsEngine.h" />
+    <ClInclude Include="Game Engine\Graphics Engine\SwapChain\SwapChain.h" />
     <ClInclude Include="Game Engine\Window\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -16,6 +16,9 @@ class Window {
 		bool release();
 		bool isRunning();
 
+		RECT getClientWindowRect();
+		void setHWND(HWND hwnd);
+
 		virtual void OnCreate();
 		virtual void OnUpdate();
 		virtual void OnDestroy();

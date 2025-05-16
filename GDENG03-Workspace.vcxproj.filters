@@ -27,6 +27,9 @@
     <ClCompile Include="Game Engine\Graphics Engine\GraphicsEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game Engine\Graphics Engine\SwapChain\SwapChain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game Engine\Window\Window.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game Engine\Graphics Engine\GraphicsEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Engine\Graphics Engine\SwapChain\SwapChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
