@@ -33,6 +33,9 @@
     <ClCompile Include="Game Engine\Graphics Engine\DeviceContext\DeviceContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game Engine\Graphics Engine\VertexBuffer\VertexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game Engine\Window\Window.h">
@@ -50,5 +53,13 @@
     <ClInclude Include="Game Engine\Graphics Engine\DeviceContext\DeviceContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Game Engine\Graphics Engine\VertexBuffer\VertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader.fx">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
