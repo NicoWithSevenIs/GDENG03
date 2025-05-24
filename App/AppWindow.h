@@ -5,12 +5,14 @@
 #include "../Game Engine/Graphics Engine/SwapChain/SwapChain.h"
 #include "../Game Engine/Graphics Engine/DeviceContext/DeviceContext.h"
 #include "../Game Engine/Graphics Engine/VertexBuffer/VertexBuffer.h"
+#include "../Game Engine/Graphics Engine/VertexShader/VertexShader.h"
 
 class AppWindow : public Window {
 	
 	private:
 		SwapChain* m_swap_chain;
 		VertexBuffer* m_vb;
+		VertexShader* m_vs;
 
 	public:
 		AppWindow();
