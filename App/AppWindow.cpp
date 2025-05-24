@@ -31,16 +31,33 @@ void AppWindow::OnCreate()
 		{0.5f, -0.5f, 0.0f},
 	};
 
+	vertex quad_list[] = {
+		{-0.5f, -0.5f, 0.0f},
+		{-0.5f, 0.5f, 0.0f},
+		{0.5f, 0.5f, 0.0f},
+
+		{0.5f, 0.5f, 0.0f},
+		{0.5f, -0.5f, 0.0f},
+		{-0.5f, -0.5f, 0.0f},
+	};
+
+	vertex strip_list[] = {
+		{-0.5f, -0.5f, 0.0f},
+		{-0.5f, 0.5f, 0.0f},
+		{0.5f, -0.5f, 0.0f},
+		{0.5f, 0.5f, 0.0f},
+	};
+
 	this->m_vb = GraphicsEngine::get()->createVertexBuffer();
 
-	UINT size_list = ARRAYSIZE(list);
+	UINT size_list = ARRAYSIZE(strip_list);
 
 	GraphicsEngine::get()->createShaders();
 	void* shader_byte_code = nullptr;
 	UINT size_shader = 0;
 	GraphicsEngine::get()->getShaderBufferAndSize(&shader_byte_code, &size_shader);
 
-	this->m_vb->load(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	this->m_vb->load(strip_list, sizeof(vertex), size_list, shader_byte_code, size_shader);
 }
 
 void AppWindow::OnUpdate()
@@ -56,7 +73,7 @@ void AppWindow::OnUpdate()
 	GraphicsEngine::get()->setShaders();
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::get()->getImmediateDeviceContext()->drawTriangleList(m_vb->getSizeVertexList(), 0);
+	GraphicsEngine::get()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getSizeVertexList(), 0);
 
 	this->m_swap_chain->present(true);
 }
