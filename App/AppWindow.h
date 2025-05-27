@@ -6,6 +6,7 @@
 #include "../Game Engine/Graphics Engine/DeviceContext/DeviceContext.h"
 #include "../Game Engine/Graphics Engine/VertexBuffer/VertexBuffer.h"
 #include "../Game Engine/Graphics Engine/VertexShader/VertexShader.h"
+#include "../Game Engine/Graphics Engine/PixelShader/PixelShader.h"
 
 class AppWindow : public Window {
 	
@@ -13,6 +14,7 @@ class AppWindow : public Window {
 		SwapChain* m_swap_chain;
 		VertexBuffer* m_vb;
 		VertexShader* m_vs;
+		PixelShader* m_ps;
 
 	public:
 		AppWindow();

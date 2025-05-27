@@ -3,6 +3,7 @@
 #include "DeviceContext/DeviceContext.h"
 #include "VertexBuffer/VertexBuffer.h"
 #include "VertexShader/VertexShader.h"
+#include "PixelShader/PixelShader.h"
 #include <d3dcompiler.h>
 
 GraphicsEngine* GraphicsEngine::get()
@@ -75,8 +76,22 @@ bool GraphicsEngine::release()
 bool GraphicsEngine::compileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
 {
 	ID3DBlob* error_blob = nullptr;
-	if (!SUCCEEDED(D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "vs 5 0", 0, 0, &m_blob, &error_blob))) {
+	if (!SUCCEEDED(D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "vs_5_0", 0, 0, &m_blob, &error_blob))) {
 		if(error_blob) error_blob->Release();
+		return false;
+	}
+
+	*shader_byte_code = m_blob->GetBufferPointer();
+	*byte_code_size = m_blob->GetBufferSize();
+
+	return true;
+}
+
+bool GraphicsEngine::compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
+{
+	ID3DBlob* error_blob = nullptr;
+	if (!SUCCEEDED(D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "ps_5_0", 0, 0, &m_blob, &error_blob))) {
+		if (error_blob) error_blob->Release();
 		return false;
 	}
 
@@ -117,22 +132,14 @@ VertexShader* GraphicsEngine::createVertexShader(const void* shader_byte_code, s
 	return vs;
 }
 
-bool GraphicsEngine::createShaders()
-
+PixelShader* GraphicsEngine::createPixelShader(const void* shader_byte_code, size_t byte_code_size)
 {
-	ID3DBlob* errblob = nullptr;
-	D3DCompileFromFile(L"shader.fx", nullptr, nullptr, "psmain", "ps_5_0", NULL, NULL, &m_psblob, &errblob);
-	m_d3d_device->CreatePixelShader(m_psblob->GetBufferPointer(), m_psblob->GetBufferSize(), nullptr, &m_ps);
-	return true;
-
+	PixelShader* ps = new PixelShader();
+	if (!ps->init(shader_byte_code, byte_code_size)) {
+		ps->release();
+		return nullptr;
+	}
+	return ps;
 }
-
-
-bool GraphicsEngine::setShaders()
-{
-	m_device_context->m_device_context->PSSetShader(m_ps, nullptr, 0);
-	return true;
-}
-
 
 

@@ -6,6 +6,7 @@ struct vec3 {
 
 struct vertex {
 	vec3 position;
+	vec3 color;
 };
 
 AppWindow::AppWindow()
@@ -26,9 +27,9 @@ void AppWindow::OnCreate()
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
 	vertex list[] = {
-		{-0.5f, -0.5f, 0.0f},
-		{0.0f, 0.5f, 0.0f},
-		{0.5f, -0.5f, 0.0f},
+		{-0.5f, -0.5f, 0.0f,  1,0,0},
+		{0.0f, 0.5f, 0.0f,    0,1,0},
+		{0.5f, -0.5f, 0.0f,   0,0,1},
 	};
 
 	vertex quad_list[] = {
@@ -42,17 +43,16 @@ void AppWindow::OnCreate()
 	};
 
 	vertex strip_list[] = {
-		{-0.5f, -0.5f, 0.0f},
-		{-0.5f, 0.5f, 0.0f},
-		{0.5f, -0.5f, 0.0f},
-		{0.5f, 0.5f, 0.0f},
+		{-0.5f, -0.5f, 0.0f,  0,1,0},
+		{-0.5f, 0.5f, 0.0f,   0,1,0},
+		{0.5f, -0.5f, 0.0f,   0,1,0},
+		{0.5f, 0.5f, 0.0f,    0,1,0},
 	};
 
 	this->m_vb = GraphicsEngine::get()->createVertexBuffer();
 
 	UINT size_list = ARRAYSIZE(strip_list);
 
-	GraphicsEngine::get()->createShaders();
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -65,6 +65,14 @@ void AppWindow::OnCreate()
 	this->m_vb->load(strip_list, sizeof(vertex), size_list, shader_byte_code, size_shader);
 
 	GraphicsEngine::get()->releaseCompiledShader();
+
+	GraphicsEngine::get()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
+	this->m_ps = GraphicsEngine::get()->createPixelShader(shader_byte_code, size_shader);
+
+
+	GraphicsEngine::get()->releaseCompiledShader();
+
+
 }
 
 void AppWindow::OnUpdate()
@@ -77,8 +85,8 @@ void AppWindow::OnUpdate()
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 
-	GraphicsEngine::get()->setShaders();
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexShader(this->m_vs);
+	GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(this->m_ps);
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
 	GraphicsEngine::get()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getSizeVertexList(), 0);
@@ -91,5 +99,7 @@ void AppWindow::OnDestroy()
 	Window::OnDestroy();
 	this->m_vb->release();
 	this->m_swap_chain->release();
+	this->m_vs->release();
+	this->m_ps->release();
 	GraphicsEngine::get()->release();
 }
