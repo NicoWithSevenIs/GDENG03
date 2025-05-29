@@ -1,12 +1,20 @@
 #include "AppWindow.h"
-
+#include <Windows.h>
 struct vec3 {
 	float x,y,z;
 };
 
 struct vertex {
 	vec3 position;
+	vec3 position1;
 	vec3 color;
+	vec3 color1;
+};
+
+__declspec(align(16))
+struct constant
+{
+	float m_angle;
 };
 
 AppWindow::AppWindow()
@@ -26,6 +34,7 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
+	/*
 	vertex list[] = {
 		{-0.5f, -0.5f, 0.0f,  1,0,0},
 		{0.0f, 0.5f, 0.0f,    0,1,0},
@@ -41,12 +50,13 @@ void AppWindow::OnCreate()
 		{0.5f, -0.5f, 0.0f},
 		{-0.5f, -0.5f, 0.0f},
 	};
+	*/
 
 	vertex strip_list[] = {
-		{-0.5f, -0.5f, 0.0f,  0,1,0},
-		{-0.5f, 0.5f, 0.0f,   0,1,0},
-		{0.5f, -0.5f, 0.0f,   0,1,0},
-		{0.5f, 0.5f, 0.0f,    0,1,0},
+		{-0.5f, -0.5f, 0.0f,	-0.32f, -0.11f, 0.0f,	  0,0,0,  0,1,0	},
+		{-0.5f, 0.5f, 0.0f,		-0.11f, 0.78f, 0.0f,	  1,1,0,  1,1,0 },
+		{0.5f, -0.5f, 0.0f,		0.75f, -0.73f, 0.0f,	  0,0,1,  1,0,0 },
+		{0.5f, 0.5f, 0.0f,		0.88f, 0.77f, 0.0f,		  1,1,1,  0,0,1 },
 	};
 
 	this->m_vb = GraphicsEngine::get()->createVertexBuffer();
@@ -72,6 +82,11 @@ void AppWindow::OnCreate()
 
 	GraphicsEngine::get()->releaseCompiledShader();
 
+	constant cc;
+	m_cb = GraphicsEngine::get()->createConstantBuffer();
+	m_cb->load(&cc, sizeof(constant));
+
+
 
 }
 
@@ -84,6 +99,22 @@ void AppWindow::OnUpdate()
 	RECT rc = this->getClientWindowRect();
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
+
+	unsigned long new_time = 0;
+
+	if (m_old_time)
+		new_time = ::GetTickCount() - m_old_time;
+	m_delta_time = new_time / 1000.0f;
+	m_old_time = ::GetTickCount();
+	m_angle += 1.57f * m_delta_time;
+
+	constant cc;
+	cc.m_angle = m_angle;
+
+	m_cb->update(GraphicsEngine::get()->getImmediateDeviceContext(), &cc);
+
+	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
+	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexShader(this->m_vs);
 	GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(this->m_ps);

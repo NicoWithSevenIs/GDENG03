@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="App\AppWindow.cpp" />
     <ClCompile Include="App\main.cpp" />
+    <ClCompile Include="Game Engine\Graphics Engine\ConstantBuffer\ConstantBuffer.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\DeviceContext\DeviceContext.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\GraphicsEngine.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\PixelShader\PixelShader.cpp" />
@@ -143,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\AppWindow.h" />
+    <ClInclude Include="Game Engine\Graphics Engine\ConstantBuffer\ConstantBuffer.h" />
     <ClInclude Include="Game Engine\Graphics Engine\DeviceContext\DeviceContext.h" />
     <ClInclude Include="Game Engine\Graphics Engine\GraphicsEngine.h" />
     <ClInclude Include="Game Engine\Graphics Engine\PixelShader\PixelShader.h" />
