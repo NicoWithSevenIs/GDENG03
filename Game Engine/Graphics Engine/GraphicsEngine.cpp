@@ -4,7 +4,6 @@
 #include "VertexBuffer/VertexBuffer.h"
 #include "VertexShader/VertexShader.h"
 #include "PixelShader/PixelShader.h"
-#include "ConstantBuffer/ConstantBuffer.h"
 #include <d3dcompiler.h>
 
 GraphicsEngine* GraphicsEngine::get()
@@ -141,11 +140,6 @@ PixelShader* GraphicsEngine::createPixelShader(const void* shader_byte_code, siz
 		return nullptr;
 	}
 	return ps;
-}
-
-ConstantBuffer* GraphicsEngine::createConstantBuffer()
-{
-	return new ConstantBuffer();
 }
 
 

@@ -4,7 +4,6 @@
 class SwapChain;
 class DeviceContext;
 class VertexBuffer;
-class ConstantBuffer;
 class VertexShader;
 class PixelShader;
 
@@ -34,7 +33,6 @@ class GraphicsEngine {
 		friend class VertexBuffer;
 		friend class VertexShader;
 		friend class PixelShader;
-		friend class ConstantBuffer;
 
 	public:
 		static GraphicsEngine* get();
@@ -56,5 +54,4 @@ class GraphicsEngine {
 		VertexBuffer* createVertexBuffer();
 		VertexShader* createVertexShader(const void* shader_byte_code, size_t byte_code_size);
 		PixelShader* createPixelShader(const void* shader_byte_code, size_t byte_code_size);
-		ConstantBuffer* createConstantBuffer();
 };
