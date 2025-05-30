@@ -7,6 +7,8 @@
 #include "../Game Engine/Graphics Engine/VertexBuffer/VertexBuffer.h"
 #include "../Game Engine/Graphics Engine/VertexShader/VertexShader.h"
 #include "../Game Engine/Graphics Engine/PixelShader/PixelShader.h"
+#include "../Polygon.h"
+#include <vector>
 
 class AppWindow : public Window {
 	
@@ -15,6 +17,8 @@ class AppWindow : public Window {
 		VertexBuffer* m_vb;
 		VertexShader* m_vs;
 		PixelShader* m_ps;
+
+		std::vector<Nico::Polygon> polygons;
 
 	public:
 		AppWindow();

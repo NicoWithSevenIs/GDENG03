@@ -1,13 +1,5 @@
 #include "AppWindow.h"
-
-struct vec3 {
-	float x,y,z;
-};
-
-struct vertex {
-	vec3 position;
-	vec3 color;
-};
+#include "../Polygon.h"
 
 AppWindow::AppWindow()
 {
@@ -26,52 +18,58 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
-	vertex list[] = {
-		{-0.5f, -0.5f, 0.0f,  1,0,0},
-		{0.0f, 0.5f, 0.0f,    0,1,0},
-		{0.5f, -0.5f, 0.0f,   0,0,1},
-	};
+	this->polygons = std::vector<Nico::Polygon>();
 
-	vertex quad_list[] = {
-		{-0.5f, -0.5f, 0.0f},
-		{-0.5f, 0.5f, 0.0f},
-		{0.5f, 0.5f, 0.0f},
+	std::vector<std::vector<vertex>> v  = {
+		{
+			{-0.2f, 0.5f, 0.0f,  1,0,1},
+			{-0.2f, 0.9f, 0.0f,   1,1,0},
+			{0.2f,  0.5f, 0.0f,   1,0,1},
+			{0.2f, 0.9f, 0.0f,    0,1,1},
+		},
 
-		{0.5f, 0.5f, 0.0f},
-		{0.5f, -0.5f, 0.0f},
-		{-0.5f, -0.5f, 0.0f},
-	};
+		{
+			{0.f, -0.2f, 0.0f,  1,1,0},
+			{0.f, 0.2f, 0.0f,   0,1,0},
+			{0.4f, -0.2f, 0.0f,   0,1,0},
+			{0.4f, 0.2f, 0.0f,    0,1,1},
+		},
 
-	vertex strip_list[] = {
-		{-0.5f, -0.5f, 0.0f,  0,1,0},
-		{-0.5f, 0.5f, 0.0f,   0,1,0},
-		{0.5f, -0.5f, 0.0f,   0,1,0},
-		{0.5f, 0.5f, 0.0f,    0,1,0},
+		{
+			{-0.8f, -0.2f, 0.0f,  1,1,0},
+			{-0.8f, 0.2f, 0.0f,   1,0,0},
+			{-0.4f, -0.2f, 0.0f,   1,0,0},
+			{-0.4f, 0.2f, 0.0f,    1,1,0},
+		},
+
+
 	};
 
 	this->m_vb = GraphicsEngine::get()->createVertexBuffer();
 
-	UINT size_list = ARRAYSIZE(strip_list);
-
-
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
+
+	GraphicsEngine::get()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
+	this->m_ps = GraphicsEngine::get()->createPixelShader(shader_byte_code, size_shader);
+	GraphicsEngine::get()->releaseCompiledShader();
+
+
 
 	GraphicsEngine::get()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 	this->m_vs = GraphicsEngine::get()->createVertexShader(shader_byte_code, size_shader);
 
-	//GraphicsEngine::get()->getShaderBufferAndSize(&shader_byte_code, &size_shader);
+	//this->m_vb->load(strip_list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	
 
-	this->m_vb->load(strip_list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	for (int i = 0; i < v.size(); i++) {
+		Nico::Polygon poly;
+		poly.init(v[i]);
+		poly.load(shader_byte_code, size_shader);
+		this->polygons.push_back(poly);
+	}
 
 	GraphicsEngine::get()->releaseCompiledShader();
-
-	GraphicsEngine::get()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
-	this->m_ps = GraphicsEngine::get()->createPixelShader(shader_byte_code, size_shader);
-
-
-	GraphicsEngine::get()->releaseCompiledShader();
-
 
 }
 
@@ -88,8 +86,12 @@ void AppWindow::OnUpdate()
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexShader(this->m_vs);
 	GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(this->m_ps);
 
-	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::get()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getSizeVertexList(), 0);
+
+	for (auto i : this->polygons) {
+		i.draw();
+	}
+
+
 
 	this->m_swap_chain->present(true);
 }

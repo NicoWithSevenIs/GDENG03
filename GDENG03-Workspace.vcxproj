@@ -140,6 +140,7 @@
     <ClCompile Include="Game Engine\Graphics Engine\VertexBuffer\VertexBuffer.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\VertexShader\VertexShader.cpp" />
     <ClCompile Include="Game Engine\Window\Window.cpp" />
+    <ClCompile Include="Polygon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\AppWindow.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="Game Engine\Graphics Engine\VertexBuffer\VertexBuffer.h" />
     <ClInclude Include="Game Engine\Graphics Engine\VertexShader\VertexShader.h" />
     <ClInclude Include="Game Engine\Window\Window.h" />
+    <ClInclude Include="Polygon.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
