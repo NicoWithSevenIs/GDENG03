@@ -23,6 +23,7 @@ class AppWindow : public Window {
 		float m_delta_time = 0;
 		float m_angle = 0;
 
+
 	public:
 		AppWindow();
 		~AppWindow();
@@ -31,4 +32,7 @@ class AppWindow : public Window {
 		void OnCreate() override;
 		void OnUpdate() override;
 		void OnDestroy() override;
+
+	public:
+		void UpdateQuadPosition();
 };

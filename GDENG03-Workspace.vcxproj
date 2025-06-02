@@ -151,6 +151,8 @@
     <ClInclude Include="Game Engine\Graphics Engine\SwapChain\SwapChain.h" />
     <ClInclude Include="Game Engine\Graphics Engine\VertexBuffer\VertexBuffer.h" />
     <ClInclude Include="Game Engine\Graphics Engine\VertexShader\VertexShader.h" />
+    <ClInclude Include="Game Engine\Math\Matrix4x4.h" />
+    <ClInclude Include="Game Engine\Math\Vector3D.h" />
     <ClInclude Include="Game Engine\Window\Window.h" />
   </ItemGroup>
   <ItemGroup>
