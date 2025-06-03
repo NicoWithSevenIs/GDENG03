@@ -5,7 +5,6 @@
 
 struct vertex {
 	Vector3D position;
-	Vector3D position1;
 	Vector3D color;
 	Vector3D color1;
 };
@@ -36,16 +35,51 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
-	vertex strip_list[] = {
-		{Vector3D(-0.5f, -0.5f, 0.0f),	Vector3D(-0.32f, -0.11f, 0.0f),	  Vector3D(0,0,0),  Vector3D(0,0,0)},
-		{Vector3D(-0.5f, 0.5f, 0.0f),	Vector3D(-0.11f, 0.78f, 0.0f),	  Vector3D(1,1,0),  Vector3D(0,0,0)},
-		{Vector3D(0.5f, -0.5f, 0.0f),	Vector3D(0.75f, -0.73f, 0.0f),	  Vector3D(0,0,1),  Vector3D(0,0,0)},
-		{Vector3D(0.5f, 0.5f, 0.0f),	Vector3D(0.88f, 0.77f, 0.0f),	  Vector3D(1,1,1),  Vector3D(0,0,0)},
+	vertex cube_list[] = {
+		{Vector3D(-0.5f, -0.5f, -0.5f), Vector3D(0, 1, 0), Vector3D(1, 0, 0)},
+		{Vector3D(-0.5f,  0.5f, -0.5f), Vector3D(1, 0, 1), Vector3D(0, 0, 1)},
+		{Vector3D(0.5f,  0.5f, -0.5f), Vector3D(0, 0, 1), Vector3D(1, 1, 0)},
+		{Vector3D(0.5f, -0.5f, -0.5f), Vector3D(1, 1, 1), Vector3D(0, 1, 1)},
+		{Vector3D(0.5f, -0.5f,  0.5f), Vector3D(0, 1, 0), Vector3D(1, 0, 1)},
+		{Vector3D(0.5f,  0.5f,  0.5f), Vector3D(1, 0, 0), Vector3D(1, 1, 1)},
+		{Vector3D(-0.5f,  0.5f,  0.5f), Vector3D(0, 0, 1), Vector3D(0, 1, 0)},
+		{Vector3D(-0.5f, -0.5f,  0.5f), Vector3D(1, 1, 0), Vector3D(0, 0, 0)},
+	};
+
+	unsigned int index_list[] =
+	{
+		// FRONT SIDE
+		0, 1, 2,   // FIRST TRIANGLE
+		2, 3, 0,   // SECOND TRIANGLE
+
+		// BACK SIDE
+		4, 5, 6,
+		6, 7, 4,
+
+		// TOP SIDE
+		1, 6, 5,
+		5, 2, 1,
+
+		// BOTTOM SIDE
+		7, 0, 3,
+		3, 4, 7,
+
+		// RIGHT SIDE
+		3, 2, 5,
+		5, 4, 3,
+
+		// LEFT SIDE
+		7, 6, 1,
+		1, 0, 7
 	};
 
 	this->m_vb = GraphicsEngine::get()->createVertexBuffer();
+	this->m_ib = GraphicsEngine::get()->createIndexBuffer();
 
-	UINT size_list = ARRAYSIZE(strip_list);
+
+
+	UINT size_list = ARRAYSIZE(cube_list);
+	UINT size_index_list = ARRAYSIZE(index_list);
 
 
 	void* shader_byte_code = nullptr;
@@ -54,7 +88,9 @@ void AppWindow::OnCreate()
 	GraphicsEngine::get()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 	this->m_vs = GraphicsEngine::get()->createVertexShader(shader_byte_code, size_shader);
 
-	this->m_vb->load(strip_list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	this->m_vb->load(cube_list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	this->m_ib->load(index_list, size_index_list);
+
 
 	GraphicsEngine::get()->releaseCompiledShader();
 
@@ -91,7 +127,9 @@ void AppWindow::OnUpdate()
 	GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(this->m_ps);
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::get()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getSizeVertexList(), 0);
+	GraphicsEngine::get()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
+
+	GraphicsEngine::get()->getImmediateDeviceContext()->drawIndexedList(m_ib->getSizeIndexList(), 0, 0);
 
 	this->m_swap_chain->present(true);
 }
@@ -103,6 +141,9 @@ void AppWindow::OnDestroy()
 	this->m_swap_chain->release();
 	this->m_vs->release();
 	this->m_ps->release();
+	this->m_ib->release();
+	this->m_cb->release();
+
 	GraphicsEngine::get()->release();
 }
 
@@ -117,22 +158,31 @@ void AppWindow::UpdateQuadPosition()
 
 	m_angle += m_delta_time;
 
-	//if(m_angle > 1.f)
-		//m_angle = 0;
-
 	constant cc;
 	cc.m_angle = m_angle;
 
-	//cc.m_world.SetTranslation(Vector3D::lerp(Vector3D(-2,-2,0), Vector3D(2,2,0), m_angle));
-
 	Matrix4x4 temp;
-	cc.m_world.SetIdentity();
-	temp.SetIdentity();
-	
-	cc.m_world.SetScale(Vector3D::lerp(Vector3D(0.5f, 0.5f, 0), Vector3D(2, 2, 0), m_angle * 0.05));
-	temp.SetTranslation(Vector3D::lerp(Vector3D(-2, -2, 0), Vector3D(2, 2, 0), m_angle * 0.1));
 
+	
+	cc.m_world.SetScale(Vector3D(1,1,1));
+
+	temp.SetIdentity();
+	temp.setRotationX(m_angle);
 	cc.m_world *= temp;
+
+	temp.SetIdentity();
+	temp.setRotationY(m_angle);
+	cc.m_world *= temp;
+
+	temp.SetIdentity();
+	temp.setRotationZ(m_angle);
+	cc.m_world *= temp;
+
+
+	//temp.SetTranslation(Vector3D());
+
+
+
 
 	cc.m_view.SetIdentity();
 	cc.m_proj.setOrthoLH(

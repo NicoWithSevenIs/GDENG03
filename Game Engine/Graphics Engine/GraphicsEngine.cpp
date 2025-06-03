@@ -5,7 +5,9 @@
 #include "VertexShader/VertexShader.h"
 #include "PixelShader/PixelShader.h"
 #include "ConstantBuffer/ConstantBuffer.h"
+#include "IndexBuffer/IndexBuffer.h"
 #include <d3dcompiler.h>
+
 
 GraphicsEngine* GraphicsEngine::get()
 {
@@ -146,6 +148,11 @@ PixelShader* GraphicsEngine::createPixelShader(const void* shader_byte_code, siz
 ConstantBuffer* GraphicsEngine::createConstantBuffer()
 {
 	return new ConstantBuffer();
+}
+
+IndexBuffer* GraphicsEngine::createIndexBuffer()
+{
+	return new IndexBuffer();
 }
 
 

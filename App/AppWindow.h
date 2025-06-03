@@ -8,6 +8,7 @@
 #include "../Game Engine/Graphics Engine/VertexShader/VertexShader.h"
 #include "../Game Engine/Graphics Engine/PixelShader/PixelShader.h"
 #include "../Game Engine/Graphics Engine/ConstantBuffer/ConstantBuffer.h"
+#include "../Game Engine/Graphics Engine/IndexBuffer/IndexBuffer.h"
 
 class AppWindow : public Window {
 	
@@ -17,6 +18,7 @@ class AppWindow : public Window {
 		VertexShader* m_vs;
 		PixelShader* m_ps;
 		ConstantBuffer* m_cb;
+		IndexBuffer* m_ib;
 
 	private:
 		unsigned long m_old_time = 0;
