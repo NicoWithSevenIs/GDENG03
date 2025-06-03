@@ -8,7 +8,9 @@ public:
 	float m_mat[4][4] = {};
 
 public:
-	Matrix4x4(){}
+	Matrix4x4(){
+		SetIdentity();
+	}
 
 	~Matrix4x4() {}
 	

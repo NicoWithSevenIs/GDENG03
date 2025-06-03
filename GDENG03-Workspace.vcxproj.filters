@@ -51,6 +51,9 @@
     <ClCompile Include="Game Engine\Input System\InputSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game Engine\Graphics Engine\Cube\Cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game Engine\Window\Window.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game Engine\Math\Point.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game Engine\Graphics Engine\Cube\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

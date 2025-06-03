@@ -11,16 +11,15 @@
 #include "../Game Engine/Graphics Engine/IndexBuffer/IndexBuffer.h"
 #include "../Game Engine/Input System/InputListener.h"
 
+#include <vector>
+#include "../Game Engine/Graphics Engine/Cube/Cube.h"
+
 
 class AppWindow : public Window, public InputListener {
 	
 	private:
 		SwapChain* m_swap_chain;
-		VertexBuffer* m_vb;
-		VertexShader* m_vs;
-		PixelShader* m_ps;
-		ConstantBuffer* m_cb;
-		IndexBuffer* m_ib;
+		std::vector<Cube*> cubes;
 
 	private:
 		unsigned long m_old_time = 0;
@@ -32,7 +31,7 @@ class AppWindow : public Window, public InputListener {
 		float zRot = 0.f;
 
 		float multiplier = 2.f;
-		float scale = 1.f;
+		float scale = 0.1f;
 	public:
 		AppWindow();
 		~AppWindow();

@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 class Vector3D {
 
 	public:
@@ -24,4 +26,10 @@ class Vector3D {
 			return v;
 		}
 
+};
+
+struct vertex {
+	Vector3D position;
+	Vector3D color;
+	Vector3D color1;
 };
