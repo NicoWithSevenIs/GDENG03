@@ -2,7 +2,9 @@
 #include <Windows.h>
 #include "../Game Engine/Math/Vector3D.h"
 #include "../Game Engine/Math/Matrix4x4.h"
-
+#include "../Game Engine/Input System/InputSystem.h"
+#include <iostream>
+#include <utility>
 struct vertex {
 	Vector3D position;
 	Vector3D color;
@@ -29,6 +31,9 @@ AppWindow::~AppWindow()
 void AppWindow::OnCreate()
 {
 	Window::OnCreate();
+
+
+
 	GraphicsEngine::get()->init();
 	this->m_swap_chain = GraphicsEngine::get()->createSwapChain();
 
@@ -111,6 +116,9 @@ void AppWindow::OnCreate()
 void AppWindow::OnUpdate()
 {
 	Window::OnUpdate();
+
+	InputSystem::get()->Update();
+
 	GraphicsEngine::get()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,  0, 0.3f, 0.4f, 1);
 
 
@@ -147,6 +155,19 @@ void AppWindow::OnDestroy()
 	GraphicsEngine::get()->release();
 }
 
+void AppWindow::OnFocus()
+{
+	std::cout << "Gained Focus\n";
+	InputSystem::get()->AddListener(this);
+}
+
+void AppWindow::OnKillFocus()
+{
+	std::cout << "Lost Focus\n";
+	InputSystem::get()->RemoveListener(this);
+	InputSystem::get()->first = true;
+}
+
 void AppWindow::UpdateQuadPosition()
 {
 	unsigned long new_time = 0;
@@ -164,18 +185,19 @@ void AppWindow::UpdateQuadPosition()
 	Matrix4x4 temp;
 
 	
-	cc.m_world.SetScale(Vector3D(1,1,1));
+	cc.m_world.SetScale(Vector3D(scale,scale,scale));
 
+	
 	temp.SetIdentity();
-	temp.setRotationX(m_angle);
+	temp.setRotationX(xRot);
 	cc.m_world *= temp;
 
 	temp.SetIdentity();
-	temp.setRotationY(m_angle);
+	temp.setRotationY(yRot);
 	cc.m_world *= temp;
 
 	temp.SetIdentity();
-	temp.setRotationZ(m_angle);
+	temp.setRotationZ(zRot);
 	cc.m_world *= temp;
 
 
@@ -194,3 +216,58 @@ void AppWindow::UpdateQuadPosition()
 
 	m_cb->update(GraphicsEngine::get()->getImmediateDeviceContext(), &cc);
 }
+
+void AppWindow::onKeyDown(int key)
+{
+	/*
+	float turn_speed = m_delta_time * multiplier;
+	switch (key) {
+		case 'W': xRot -= turn_speed; break;
+		case 'S': xRot += turn_speed;  break;
+
+		case 'A': yRot -= turn_speed; break;
+		case 'D': yRot += turn_speed;  break;
+
+		case 'Q': zRot -= turn_speed; break;
+		case 'E':  zRot += turn_speed;  break;
+
+	}
+	*/
+}
+
+void AppWindow::onKeyUp(int key)
+{
+	
+}
+
+void AppWindow::onMouseMove(const Point& delta_mouse_point)
+{
+	
+
+	xRot -= delta_mouse_point.m_y * m_delta_time ;
+	yRot -= delta_mouse_point.m_x * m_delta_time ;
+
+}
+
+void AppWindow::onLeftMouseDown(const Point& delta_mouse_point)
+{
+	std::cout << "Left Click!\n";
+	scale += 0.5f;
+}
+
+void AppWindow::onLeftMouseUp(const Point& delta_mouse_point)
+{
+}
+
+void AppWindow::onRightMouseDown(const Point& delta_mouse_point)
+{
+	std::cout << "Right Click!\n";
+	scale -= 0.5f;
+	if(scale < 1.f)
+		scale = 1.f;
+}
+
+void AppWindow::onRightMouseUp(const Point& delta_mouse_point)
+{
+}
+
