@@ -171,7 +171,7 @@ void AppWindow::onLeftMouseDown(const Point& delta_mouse_point)
 	temp.SetScale(Vector3D(0.2f, 0.2f, 0.2f));
 	c->m_transform *= temp;
 
-	/*
+	/* 
 	RECT rc = this->getClientWindowRect();
 
 	UINT width = rc.right - rc.left;
