@@ -2,24 +2,33 @@
 #include "../GraphicsEngine.h"
 #include "../DeviceContext/DeviceContext.h"
 
-Cube::Cube() :m_transform(Matrix4x4()), m_name("Cube") {}
+Cube::Cube() :m_name("Cube") {}
 
-Cube::Cube(std::string name):m_transform(Matrix4x4()), m_name(name) {}
+Cube::Cube(std::string name): m_name(name) {}
+
+Vector3D getRandom() {
+	Vector3D r;
+	r.m_x = rand() % 2;
+	r.m_y = rand() % 2;
+	r.m_z = rand() % 2;
+	return r;
+}
 
 bool Cube::load()
 {
-	vertex cube_list[] = {
-			{Vector3D(-0.5f, -0.5f, -0.5f), Vector3D(0, 1, 0), Vector3D(1, 0, 0)},
-			{Vector3D(-0.5f,  0.5f, -0.5f), Vector3D(1, 0, 1), Vector3D(0, 0, 1)},
-			{Vector3D(0.5f,  0.5f, -0.5f), Vector3D(0, 0, 1), Vector3D(1, 1, 0)},
-			{Vector3D(0.5f, -0.5f, -0.5f), Vector3D(1, 1, 1), Vector3D(0, 1, 1)},
-			{Vector3D(0.5f, -0.5f,  0.5f), Vector3D(0, 1, 0), Vector3D(1, 0, 1)},
-			{Vector3D(0.5f,  0.5f,  0.5f), Vector3D(1, 0, 0), Vector3D(1, 1, 1)},
-			{Vector3D(-0.5f,  0.5f,  0.5f), Vector3D(0, 0, 1), Vector3D(0, 1, 0)},
-			{Vector3D(-0.5f, -0.5f,  0.5f), Vector3D(1, 1, 0), Vector3D(0, 0, 0)},
-	};
 
-	unsigned int index_list[] =
+	this->cube_list = {
+		{Vector3D(-0.5f, -0.5f, -0.5f), getRandom(), getRandom()},
+		{Vector3D(-0.5f,  0.5f, -0.5f), getRandom(), getRandom()},
+		{Vector3D(0.5f,  0.5f, -0.5f), getRandom(), getRandom()},
+		{Vector3D(0.5f, -0.5f, -0.5f), getRandom(), getRandom()},
+		{Vector3D(0.5f, -0.5f,  0.5f), getRandom(), getRandom()},
+		{Vector3D(0.5f,  0.5f,  0.5f), getRandom(), getRandom()},
+		{Vector3D(-0.5f,  0.5f,  0.5f), getRandom(), getRandom()},
+		{Vector3D(-0.5f, -0.5f,  0.5f), getRandom(), getRandom()},
+	};
+	
+	this->index_list =
 	{
 		// FRONT SIDE
 		0, 1, 2,   // FIRST TRIANGLE
@@ -47,12 +56,11 @@ bool Cube::load()
 	};
 
 
-
 	this->m_vb = GraphicsEngine::get()->createVertexBuffer();
 	this->m_ib = GraphicsEngine::get()->createIndexBuffer();
 
-	UINT size_list = ARRAYSIZE(cube_list);
-	UINT size_index_list = ARRAYSIZE(index_list);
+	UINT size_list = cube_list.size();
+	UINT size_index_list = index_list.size();
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -62,8 +70,8 @@ bool Cube::load()
 	GraphicsEngine::get()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 	this->m_vs = GraphicsEngine::get()->createVertexShader(shader_byte_code, size_shader);
 
-	this->m_vb->load(cube_list, sizeof(vertex), size_list, shader_byte_code, size_shader);
-	this->m_ib->load(index_list, size_index_list);
+	this->m_vb->load(cube_list.data(), sizeof(vertex), size_list, shader_byte_code, size_shader);
+	this->m_ib->load(index_list.data(), size_index_list);
 
 	GraphicsEngine::get()->releaseCompiledShader();
 
@@ -78,8 +86,9 @@ bool Cube::load()
 	m_cb = GraphicsEngine::get()->createConstantBuffer();
 	m_cb->load(&cc, sizeof(constant));
 
-	m_transform.SetTranslation(Vector3D());
-
+	pace = (float)(rand() % 120 + 20)/100 ;
+	dir = (float)(rand()%8-4);
+	dir = dir == 0? 1 : dir;
 
 	return true;
 }
@@ -97,6 +106,9 @@ bool Cube::release()
 
 void Cube::Draw()
 {
+	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(this->m_vs, m_cb);
+	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(this->m_ps, m_cb);
+
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexShader(this->m_vs);
 	GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(this->m_ps);
 
@@ -105,34 +117,23 @@ void Cube::Draw()
 	GraphicsEngine::get()->getImmediateDeviceContext()->drawIndexedList(m_ib->getSizeIndexList(), 0, 0);
 }
 
-void Cube::Update(float delta_time, RECT client_rect)
+
+void Cube::Update(float delta_time, Matrix4x4 view_matrix, Matrix4x4 projection_matrix)
 {
 	
 	constant cc;
 
-	m_x_rot += delta_time;
-	m_y_rot += delta_time;
 
-
-
-
+	m_transform.m_rotation.m_x += delta_time * dir * pace;
+	m_transform.m_rotation.m_y += delta_time * dir * pace;
+	m_transform.m_rotation.m_z += delta_time * dir * pace;
 
 	cc.m_angle = delta_time;
-
-
-	cc.m_world = this->m_transform;
-
-	cc.m_view.SetIdentity();
-	cc.m_proj.setOrthoLH(
-		(client_rect.right - client_rect.left) / 400.f,
-		(client_rect.bottom - client_rect.top) / 400.f,
-		-4.f,
-		4.f
-	);
+	cc.m_world = this->m_transform.GetTransformationMatrix();
+	cc.m_view = view_matrix;
+	cc.m_proj = projection_matrix;
 
 	m_cb->update(GraphicsEngine::get()->getImmediateDeviceContext(), &cc);
 
-	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(this->m_vs, m_cb);
-	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(this->m_ps, m_cb);
-
 }
+

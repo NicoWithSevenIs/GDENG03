@@ -13,6 +13,10 @@ public:
 		SetIdentity();
 	}
 
+	Matrix4x4(const Matrix4x4& other) {
+		::memcpy(m_mat, other.m_mat, sizeof(float) * 16);
+	}
+
 	~Matrix4x4() {}
 	
 	void SetIdentity() 
@@ -44,6 +48,18 @@ public:
 		m_mat[1][1] = 2.f / height;
 		m_mat[2][2] = 1.f / (far_plane - near_plane);
 		m_mat[3][2] = -(near_plane / (far_plane - near_plane));
+	}
+
+	void setPerspectiveFovLH(float fov, float aspect, float znear, float zfar)
+	{
+		SetIdentity();
+		float yscale = 1.0f / tan(fov / 2.0f);
+		float xscale = yscale / aspect;
+		m_mat[0][0] = xscale;
+		m_mat[1][1] = yscale;
+		m_mat[2][2] = zfar / (zfar - znear);
+		m_mat[2][3] = 1.0f;
+		m_mat[3][2] = (-znear * zfar) / (zfar - znear);
 	}
 
 	void setRotationX(float x)
@@ -143,5 +159,41 @@ public:
 		::memcpy(m_mat, matrix.m_mat, sizeof(float) * 16);
 	}
 
+	Vector3D getLocalZDirection() {
+		return Vector3D(m_mat[2][0], m_mat[2][1], m_mat[2][2]);
+	}
+
+	Vector3D getLocalXDirection() {
+		return Vector3D(m_mat[0][0], m_mat[0][1], m_mat[0][2]);
+	}
+
+	Vector3D getLocalYDirection() {
+		return Vector3D(m_mat[1][0], m_mat[1][1], m_mat[1][2]);
+	}
+
+
+	static Vector3D transform(const Vector3D& v3, const Matrix4x4& mat4) {
+		
+		auto v4 = Vector4D(v3,1.f);
+		auto transformed = Vector4D();
+
+		transformed.m_x = v4.m_x * mat4.m_mat[0][0] + v4.m_y * mat4.m_mat[0][1] + v4.m_z * mat4.m_mat[0][2] + v4.m_w * mat4.m_mat[0][3];
+		transformed.m_y = v4.m_x * mat4.m_mat[1][0] + v4.m_y * mat4.m_mat[1][1] + v4.m_z * mat4.m_mat[1][2] + v4.m_w * mat4.m_mat[1][3];
+		transformed.m_z = v4.m_x * mat4.m_mat[2][0] + v4.m_y * mat4.m_mat[2][1] + v4.m_z * mat4.m_mat[2][2] + v4.m_w * mat4.m_mat[2][3];
+		transformed.m_w = v4.m_x * mat4.m_mat[3][0] + v4.m_y * mat4.m_mat[3][1] + v4.m_z * mat4.m_mat[3][2] + v4.m_w * mat4.m_mat[3][3];
+
+		return Vector3D(transformed.m_x, transformed.m_y, transformed.m_z);
+	}
+
+	Vector4D operator * (const Vector4D& v4) {
+		auto transformed = Vector4D();
+
+		transformed.m_x = v4.m_x * m_mat[0][0] + v4.m_y * m_mat[0][1] + v4.m_z * m_mat[0][2] + v4.m_w * m_mat[0][3];
+		transformed.m_y = v4.m_x * m_mat[1][0] + v4.m_y * m_mat[1][1] + v4.m_z * m_mat[1][2] + v4.m_w * m_mat[1][3];
+		transformed.m_z = v4.m_x * m_mat[2][0] + v4.m_y * m_mat[2][1] + v4.m_z * m_mat[2][2] + v4.m_w * m_mat[2][3];
+		transformed.m_w = v4.m_x * m_mat[3][0] + v4.m_y * m_mat[3][1] + v4.m_z * m_mat[3][2] + v4.m_w * m_mat[3][3];
+
+		return transformed;
+	}
 
 };

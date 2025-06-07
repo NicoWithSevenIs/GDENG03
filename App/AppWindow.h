@@ -20,6 +20,7 @@ class AppWindow : public Window, public InputListener {
 	private:
 		SwapChain* m_swap_chain;
 		std::vector<Cube*> cubes;
+		Transform camera_transform;
 
 	private:
 		unsigned long m_old_time = 0;
@@ -32,6 +33,10 @@ class AppWindow : public Window, public InputListener {
 
 		float multiplier = 2.f;
 		float scale = 0.1f;
+		bool first = true;
+
+
+		float updatetransforms = false;
 	public:
 		AppWindow();
 		~AppWindow();
@@ -44,6 +49,8 @@ class AppWindow : public Window, public InputListener {
 		void OnFocus() override;
 		void OnKillFocus() override;
 
+		void PickAndDrag();
+
 	public:
 		void UpdateQuadPosition();
 
@@ -52,7 +59,7 @@ class AppWindow : public Window, public InputListener {
 		void onKeyUp(int key) override;
 
 		// Inherited via InputListener
-		void onMouseMove(const Point& delta_mouse_point) override;
+		void onMouseMove(const Point& delta_mouse_point, const Point& mouse_pos) override;
 
 		// Inherited via InputListener
 		void onLeftMouseDown(const Point& delta_mouse_point) override;

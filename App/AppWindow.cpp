@@ -6,7 +6,8 @@
 #include <iostream>
 #include <utility>
 #include <cstdlib>
-
+#include <algorithm>
+#include <DirectXMath.h>
 
 
 AppWindow::AppWindow()
@@ -29,32 +30,48 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
-	for (int i = 0; i < 5; i++) {
+
+	auto randFloat = []() {
+		return static_cast<float>(rand()) / RAND_MAX * 1.5f - 0.75f;
+	};
+
+	float rand_x = randFloat();
+
+
+	for (int i = 0; i < 100; i++) {
 		cubes.push_back(new Cube());
 		cubes[i]->load();
-
-		Matrix4x4 temp;
-		
-		temp.SetTranslation(Vector3D(-2 + i * 1.5f, 0, 0));
-		cubes[i]->m_transform *= temp;
-		
-
-		temp.SetScale(Vector3D(0.2f, 0.2f, 0.2f));
-		cubes[i]->m_transform *= temp;
+		cubes[i]->m_transform.m_scale = Vector3D(0.2f, 0.2f, 0.2f);
+		cubes[i]->m_transform.m_translation = Vector3D(randFloat(), randFloat(), randFloat());
 	}
+	
+	
+	
+	camera_transform.m_translation = Vector3D(0,0,-2);
 
 }
+
+bool isMoving = false;
+float dir = 0.f;
+float r = 0.f;
+float up = 0.f;
+
+Matrix4x4 projection_matrix;
+Matrix4x4 view_matrix;
+float fov = 1.57f;
+Vector3D ray;
+
 
 void AppWindow::OnUpdate()
 {
 	Window::OnUpdate();
 
 	InputSystem::get()->Update();
-
 	GraphicsEngine::get()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,  0, 0.3f, 0.4f, 1);
 
-
 	RECT rc = this->getClientWindowRect();
+	float width = rc.right - rc.left;
+	float height = rc.bottom - rc.top;
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 
@@ -67,28 +84,41 @@ void AppWindow::OnUpdate()
 
 	m_angle += 0.1 * m_delta_time;
 
-	Matrix4x4 temp;
-	temp.setRotationX(m_delta_time);
+
+	Matrix4x4 camera_matrix = this->camera_transform.GetTransformationMatrix();
+	Vector3D forward = camera_matrix.getLocalZDirection() * m_delta_time * dir;
+	Vector3D right = camera_matrix.getLocalXDirection() * m_delta_time * r;
+
+	this->camera_transform.m_translation = this->camera_transform.m_translation + forward + right + Vector3D(0, m_delta_time * up, 0);
+	this->camera_transform.m_rotation = Vector3D(xRot, yRot, 0);
+
+
+	view_matrix = Matrix4x4(this->camera_transform.GetTransformationMatrix());
+	view_matrix.inverse();
+
+	/*projection_matrix.setPerspectiveFovLH(fov, width/height , 0.1f, 100.0f);*/
+
+	projection_matrix.setOrthoLH(
+		(rc.right - rc.left) / 400.f,
+		(rc.bottom - rc.top) / 400.f,
+		-4.f,
+		4.f
+	);
 	
-	for(auto c: cubes){
-		c->m_transform *= temp;
-	}
-
-	temp.SetIdentity();
-	temp.setRotationY(m_delta_time);
-
-	for (auto c : cubes) {
-		c->m_transform *= temp;
-	}
-
+	
 	//draw here 
 	for (auto c : cubes) {
-		c->Update(m_delta_time, this->getClientWindowRect());
+		if (updatetransforms || first) {
+			c->Update(m_delta_time, view_matrix, projection_matrix);
+		}
 		c->Draw();
+		
 	}
-		
-		
-
+	
+	if(first)
+		first = false;
+	
+	
 	this->m_swap_chain->present(true);
 }
 
@@ -124,65 +154,105 @@ void AppWindow::UpdateQuadPosition()
 
 void AppWindow::onKeyDown(int key)
 {
-	/*
+	
 	float turn_speed = m_delta_time * multiplier;
 	switch (key) {
-		case 'W': xRot -= turn_speed; break;
-		case 'S': xRot += turn_speed;  break;
+		case 'W': dir = 1.f; break;
+		case 'S': dir = -1.f;  break;
 
-		case 'A': yRot -= turn_speed; break;
-		case 'D': yRot += turn_speed;  break;
-
-		case 'Q': zRot -= turn_speed; break;
-		case 'E':  zRot += turn_speed;  break;
+		
+		case 'A': r = -1.f; break;
+		case 'D': r = 1.f;  break;
+		
+		case 'Q': up = -1.f; break;
+		case 'E':  up = 1.f;  break;
+		
+		
 	}
-	*/
+	
 }
 
 void AppWindow::onKeyUp(int key)
 {
-	
+	switch (key) {
+		case 'W': 
+		case 'S': dir = 0.f;  break;
+		case 'A': 
+		case 'D': r = 0.f;  break;
+		case 'Q': 
+		case 'E': up = 0.f;  break;
+		case 'R': for(auto i: cubes) i->release(); cubes.clear();
+		case 'V': updatetransforms = !updatetransforms; break;
+	}
 }
 
-void AppWindow::onMouseMove(const Point& delta_mouse_point)
+
+
+Vector3D raydir;
+Vector3D rayorigin;
+
+
+Cube* selected = nullptr;
+
+void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_pos)
 {
+	
+	//xRot -= delta_mouse_point.m_y * m_delta_time * 0.1f ;
+	//yRot -= delta_mouse_point.m_x * m_delta_time * 0.1f ;
 
-	xRot -= delta_mouse_point.m_y * m_delta_time ;
-	yRot -= delta_mouse_point.m_x * m_delta_time ;
+	POINT p = {};
+	p.x = mouse_pos.m_x;
+	p.y = mouse_pos.m_y;
 
+	Matrix4x4 inverse_view_proj;
+	inverse_view_proj.SetIdentity();
+	inverse_view_proj *= view_matrix;
+	inverse_view_proj *= projection_matrix;
+	inverse_view_proj.inverse();
+
+	ScreenToClient(this->m_hwnd, &p);
+
+	//get NDC coordinates
+	RECT rc = this->getClientWindowRect();
+	float width = rc.right - rc.left;
+	float height = rc.bottom - rc.top;
+
+	float ndc_x = std::clamp( (p.x / width) * 2.f - 1.f , -1.f, 1.f);
+	float ndc_y = std::clamp( 1.0f - (p.y / height) * 2.0f, -1.f, 1.f);
+
+	Vector3D origin = Vector3D(ndc_x, ndc_y, 0);
+	Vector3D far_v = Vector3D(ndc_x, ndc_y, 1);
+
+	//project ray to world space by "reversing the graphics pipeline?" by inverting the view and projection matrix
+	rayorigin = Matrix4x4::transform(origin, inverse_view_proj);
+	Vector3D rayend = Matrix4x4::transform(far_v, inverse_view_proj);
+
+	//get direction
+	raydir = Vector3D::normalize(rayend - rayorigin);
+
+	//translate ray to origin of the ray position
+	ray = rayorigin+raydir;
+
+
+	//some object picking stuff
+	if(selected)
+		selected->m_transform.m_translation = ray;
+	
 }
 
 void AppWindow::onLeftMouseDown(const Point& delta_mouse_point)
 {
-	std::cout << "Left Click!\n";
+	if(selected)
+		return;
 
+	//create cube at ray position
 	Cube* c = new Cube();
 	c->load();
 	cubes.push_back(c);
+	c->m_transform.m_translation = ray;
+	c->m_transform.m_scale = Vector3D(0.2f,0.2f,0.2f);
 
-	int rand_x = rand() % 5 + 1;
-	int rand_y = rand() % 5 + 1;
-	int rand_z = rand() % 5 + 1;
-
-	Matrix4x4 temp;
-	temp.SetTranslation(Vector3D(rand_x, rand_y, rand_z));
-	c->m_transform *= temp;
-
-	temp.SetScale(Vector3D(0.2f, 0.2f, 0.2f));
-	c->m_transform *= temp;
-
-	/* 
-	RECT rc = this->getClientWindowRect();
-
-	UINT width = rc.right - rc.left;
-	UINT height = rc.bottom - rc.top;
-
-	float ndc_X = (delta_mouse_point.m_x / width) * 2 - 1;
-	float ndc_y = 1 - (delta_mouse_point.m_y / height) * 2;
-
-	Vector3D vec = Vector3D(ndc_X, ndc_y, 0);
-	*/
-
+	std::cout << "(" << ray.m_x << "," << ray.m_y << "," << ray.m_z << ")\n"; 
 
 }
 
@@ -190,15 +260,84 @@ void AppWindow::onLeftMouseUp(const Point& delta_mouse_point)
 {
 }
 
+//Möller–Trumbore intersection algorithm. https://en.m.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+
+bool Intersects(Vector3D v0, Vector3D v1, Vector3D v2, float dist = 1.f) {
+
+	constexpr float epsilon = std::numeric_limits<float>::epsilon();
+
+	Vector3D edge1 = v1 - v0;
+	Vector3D edge2 = v2 - v0;
+	Vector3D ray_cross_e2 = Vector3D::Cross(ray * dist, edge2);
+
+	float det = Vector3D::Dot(edge1, ray_cross_e2);
+
+	if(det > -epsilon && det < epsilon)
+		return false;
+
+	float inv_det = 1.f / det;
+	Vector3D s = rayorigin - v0;
+	float u = inv_det * Vector3D::Dot(s, ray_cross_e2);
+
+	if ((u < 0 && abs(u) > epsilon) || (u > 1 && abs(u - 1) > epsilon))
+		return false;
+
+	Vector3D s_cross_e1 = Vector3D::Cross(s, edge1);
+	float v = inv_det * Vector3D::Dot(ray * dist, s_cross_e1);
+
+	if ((v < 0 && abs(v) > epsilon) || (u + v > 1 && abs(u + v - 1) > epsilon))
+		return false;
+
+	float t = inv_det * Vector3D::Dot(edge2, s_cross_e1);
+
+	return t > epsilon && t <= dist;
+}
+
+//still buggy
+void AppWindow::PickAndDrag() {
+	if (!selected) {
+		for (auto c : cubes) {
+
+			for (UINT i = 0; i < c->index_list.size() / 3; i++) {
+				UINT i0 = c->index_list[i * 3 + 0];
+				UINT i1 = c->index_list[i * 3 + 1];
+				UINT i2 = c->index_list[i * 3 + 2];
+
+				//std::cout << i0 << ","  << i1 << "," << i2 << "\n";
+
+				Vector3D v0 = c->cube_list[i0].position;
+				Vector3D v1 = c->cube_list[i1].position;
+				Vector3D v2 = c->cube_list[i2].position;
+
+				Matrix4x4 translation;
+				translation.SetTranslation(c->m_transform.m_translation);
+
+				v0 = v0 + c->m_transform.m_translation;
+				v1 = v1 + c->m_transform.m_translation;
+				v2 = v2 + c->m_transform.m_translation;
+
+
+				if (Intersects(v0, v1, v2, 100)) {
+					selected = c;
+					break;
+				}
+
+			}
+
+
+		}
+	}
+	else selected = nullptr;
+
+}
+
 void AppWindow::onRightMouseDown(const Point& delta_mouse_point)
 {
-	std::cout << "Right Click!\n";
-	scale -= 0.1f;
-	if(scale < 0.1f)
-		scale = 0.1f;
+	PickAndDrag();
 }
 
 void AppWindow::onRightMouseUp(const Point& delta_mouse_point)
 {
+	
 }
 

@@ -9,6 +9,8 @@
 #include "../PixelShader/PixelShader.h"
 #include "../ConstantBuffer/ConstantBuffer.h"
 #include <string>
+#include <vector>
+#include "../Transform/Transform.h"
 
 __declspec(align(16))
 struct constant
@@ -21,8 +23,18 @@ struct constant
 
 class Cube {
 	
+
 	public:
-		Matrix4x4 m_transform;
+		std::vector<vertex> cube_list;
+		std::vector<unsigned int> index_list;
+
+		float pace = 0.1f;
+		float dir = 1.f;
+
+	public:
+		Transform m_transform;
+
+	public:
 		std::string m_name;
 		Vector3D pos;
 
@@ -35,12 +47,6 @@ class Cube {
 
 		ConstantBuffer* m_cb;
 		
-		float m_x_rot = 0;
-		float m_y_rot = 0;
-
-
-		
-
 	public:
 		Cube();
 		Cube(std::string name);
@@ -49,7 +55,8 @@ class Cube {
 		bool release();
 
 		void Draw();
-		void Update(float delta_time, RECT client_rect);
+		void Update(float delta_time, Matrix4x4 view_matrix, Matrix4x4 projection_matrix);
+
 		
 };
 

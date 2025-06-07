@@ -76,6 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,6 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,6 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,6 +124,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +143,7 @@
     <ClCompile Include="Game Engine\Graphics Engine\GraphicsEngine.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\IndexBuffer\IndexBuffer.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\PixelShader\PixelShader.cpp" />
+    <ClCompile Include="Game Engine\Graphics Engine\ShaderManager\ShaderManager.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\SwapChain\SwapChain.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\VertexBuffer\VertexBuffer.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\VertexShader\VertexShader.cpp" />
@@ -153,7 +158,9 @@
     <ClInclude Include="Game Engine\Graphics Engine\GraphicsEngine.h" />
     <ClInclude Include="Game Engine\Graphics Engine\IndexBuffer\IndexBuffer.h" />
     <ClInclude Include="Game Engine\Graphics Engine\PixelShader\PixelShader.h" />
+    <ClInclude Include="Game Engine\Graphics Engine\ShaderManager\ShaderManager.h" />
     <ClInclude Include="Game Engine\Graphics Engine\SwapChain\SwapChain.h" />
+    <ClInclude Include="Game Engine\Graphics Engine\Transform\Transform.h" />
     <ClInclude Include="Game Engine\Graphics Engine\VertexBuffer\VertexBuffer.h" />
     <ClInclude Include="Game Engine\Graphics Engine\VertexShader\VertexShader.h" />
     <ClInclude Include="Game Engine\Input System\InputListener.h" />
@@ -161,7 +168,9 @@
     <ClInclude Include="Game Engine\Math\Matrix4x4.h" />
     <ClInclude Include="Game Engine\Math\Point.h" />
     <ClInclude Include="Game Engine\Math\Vector3D.h" />
+    <ClInclude Include="Game Engine\Math\Vector4D.h" />
     <ClInclude Include="Game Engine\Window\Window.h" />
+    <ClInclude Include="Library\Interfaces\Singleton.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
