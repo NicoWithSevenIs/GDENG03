@@ -18,6 +18,14 @@ class AppWindow : public Window {
 		PixelShader* m_ps;
 		ConstantBuffer* m_cb;
 
+
+		float sspeed = 0;
+		float speed_sign = 1;
+		float max_speed = 5;
+		float speed_speed = 3;
+
+
+
 	private:
 		unsigned long m_old_time = 0;
 		float m_delta_time = 0;

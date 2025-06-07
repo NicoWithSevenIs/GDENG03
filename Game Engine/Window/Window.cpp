@@ -60,6 +60,8 @@ bool Window::init()
 
 	m_is_running = true;
 
+	Time::initialize();
+
 	return true;
 }
 
@@ -67,6 +69,7 @@ bool Window::broadcast()
 {
 	MSG msg;
 
+	Time::LogFrameStart();
 	window->OnUpdate();
 
 	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
@@ -76,8 +79,8 @@ bool Window::broadcast()
 
 	window->OnUpdate();
 
-	Sleep(0);
-
+	Sleep(1);
+	Time::LogFrameEnd();
 	return true;
 }
 

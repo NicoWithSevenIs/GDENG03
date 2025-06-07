@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-
+#include "../../Time.h"
 class Window {
 
 	protected:
