@@ -59,6 +59,16 @@ void AppWindow::OnCreate()
 		{0.5f, 0.5f, 0.0f,		0.88f, 0.77f, 0.0f,		  1,1,1,  0,0,1 },
 	};
 
+	/*
+	
+		vertex strip_list[] = {
+			{-0.5f, -0.5f, 0.0f,	-0.32f, -0.11f, 0.0f,	  0,0,0,  0,1,0	},
+			{-0.5f, 0.5f, 0.0f,		0.11f, 0.78f, 0.0f,	  1,1,0,  1,1,0 },
+			{0.5f, -0.5f, 0.0f,		0.75f, -0.73f, 0.0f,	  0,0,1,  1,0,0 },
+			{0.5f, 0.5f, 0.0f,		-0.88f, 0.77f, 0.0f,		  1,1,1,  0,0,1 },
+		};
+
+	*/
 	this->m_vb = GraphicsEngine::get()->createVertexBuffer();
 
 	UINT size_list = ARRAYSIZE(strip_list);
@@ -104,13 +114,14 @@ void AppWindow::OnUpdate()
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 
+	/*
 	if (sspeed < max_speed) {
 		sspeed += Time::getDeltaTime() * 0.3;
 	}
 		
 	else sspeed = 0;
-
-	m_angle += 1.57f * Time::getDeltaTime() * sspeed;
+	*/
+	m_angle += 1.57f * Time::getDeltaTime() /** sspeed*/;
 
 	constant cc;
 	cc.m_angle = m_angle;
