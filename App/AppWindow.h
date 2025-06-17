@@ -13,6 +13,7 @@
 
 #include <vector>
 #include "../Game Engine/Graphics Engine/Cube/Cube.h"
+#include "../Quad.h"
 
 
 class AppWindow : public Window, public InputListener {
@@ -21,6 +22,9 @@ class AppWindow : public Window, public InputListener {
 		SwapChain* m_swap_chain;
 		std::vector<Cube*> cubes;
 		Transform camera_transform;
+
+		Cube* c;
+		Quad* q;
 
 	private:
 		unsigned long m_old_time = 0;

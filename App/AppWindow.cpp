@@ -30,23 +30,18 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
+	q = new Quad();
+	q->load();
+	q->m_transform.m_translation = Vector3D(0,-10,-0.15);
+	q->m_transform.m_rotation = Vector3D(0,0,0);
+	q->m_transform.m_scale = Vector3D(15,15,15);
 
-	auto randFloat = []() {
-		return static_cast<float>(rand()) / RAND_MAX * 1.5f - 0.75f;
-	};
 
-	float rand_x = randFloat();
+	c = new Cube();
+	c->load();
+	c->m_transform.m_translation = Vector3D();
 
 
-	for (int i = 0; i < 100; i++) {
-		cubes.push_back(new Cube());
-		cubes[i]->load();
-		cubes[i]->m_transform.m_scale = Vector3D(0.2f, 0.2f, 0.2f);
-		cubes[i]->m_transform.m_translation = Vector3D(randFloat(), randFloat(), randFloat());
-	}
-	
-	
-	
 	camera_transform.m_translation = Vector3D(0,0,-2);
 
 }
@@ -96,27 +91,35 @@ void AppWindow::OnUpdate()
 	view_matrix = Matrix4x4(this->camera_transform.GetTransformationMatrix());
 	view_matrix.inverse();
 
-	/*projection_matrix.setPerspectiveFovLH(fov, width/height , 0.1f, 100.0f);*/
-
+	projection_matrix.setPerspectiveFovLH(fov, width/height , 0.1f, 100.0f);
+	
+	/*
 	projection_matrix.setOrthoLH(
 		(rc.right - rc.left) / 400.f,
 		(rc.bottom - rc.top) / 400.f,
 		-4.f,
 		4.f
 	);
+	*/
 	
-	
+	/*
 	//draw here 
 	for (auto c : cubes) {
-		if (updatetransforms || first) {
+		//if (updatetransforms || first) {
 			c->Update(m_delta_time, view_matrix, projection_matrix);
-		}
+		//}
 		c->Draw();
 		
 	}
-	
-	if(first)
-		first = false;
+	*/
+
+	c->Update(m_delta_time, view_matrix, projection_matrix);
+	c->Draw();
+
+	q->Update(m_delta_time, view_matrix, projection_matrix);
+	q->Draw();
+	//if(first)
+		//first = false;
 	
 	
 	this->m_swap_chain->present(true);
@@ -197,8 +200,8 @@ Cube* selected = nullptr;
 void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_pos)
 {
 	
-	//xRot -= delta_mouse_point.m_y * m_delta_time * 0.1f ;
-	//yRot -= delta_mouse_point.m_x * m_delta_time * 0.1f ;
+	xRot -= delta_mouse_point.m_y * m_delta_time * 0.1f ;
+	yRot -= delta_mouse_point.m_x * m_delta_time * 0.1f ;
 
 	POINT p = {};
 	p.x = mouse_pos.m_x;
@@ -240,19 +243,24 @@ void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_p
 	
 }
 
+float z_offset = 0;
+
 void AppWindow::onLeftMouseDown(const Point& delta_mouse_point)
 {
 	if(selected)
 		return;
 
+	//z_offset -= 0.5;
 	//create cube at ray position
 	Cube* c = new Cube();
 	c->load();
 	cubes.push_back(c);
-	c->m_transform.m_translation = ray;
+	Vector3D newR = Vector3D(ray);
+	newR.m_z += z_offset;
+	c->m_transform.m_translation = newR;
 	c->m_transform.m_scale = Vector3D(0.2f,0.2f,0.2f);
 
-	std::cout << "(" << ray.m_x << "," << ray.m_y << "," << ray.m_z << ")\n"; 
+	std::cout << "(" << newR.m_x << "," << newR.m_y << "," << newR.m_z << ")\n";
 
 }
 

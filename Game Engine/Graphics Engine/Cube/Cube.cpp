@@ -2,9 +2,9 @@
 #include "../GraphicsEngine.h"
 #include "../DeviceContext/DeviceContext.h"
 
-Cube::Cube() :m_name("Cube") {}
+Cube::Cube() : GameObject("Cube") {}
 
-Cube::Cube(std::string name): m_name(name) {}
+Cube::Cube(std::string name): GameObject(name) {}
 
 Vector3D getRandom() {
 	Vector3D r;
@@ -104,8 +104,7 @@ bool Cube::release()
 	return true;
 }
 
-void Cube::Draw()
-{
+void Cube::Draw() {
 	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(this->m_vs, m_cb);
 	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(this->m_ps, m_cb);
 

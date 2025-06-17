@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <cmath>
 
 class Vector3D {
 
