@@ -76,6 +76,8 @@ void Quad::Update(float delta_time, Matrix4x4 view_matrix, Matrix4x4 projection_
 	cc.m_world = this->m_transform.GetTransformationMatrix();
 	cc.m_view = view_matrix;
 	cc.m_proj = projection_matrix;
+	cc.m_color = m_color;
+	cc.isRandom = isRainbow;
 
 	m_cb->update(GraphicsEngine::get()->getImmediateDeviceContext(), &cc);
 

@@ -33,23 +33,28 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
+	/*
 	q = new Quad();
 	q->load();
 	//q->m_transform.m_translation = Vector3D(0,-10,-0.15);
 	q->m_transform.m_rotation.m_x = 270 * M_PI / 180;
 	q->m_transform.m_scale = Vector3D(5,5,5);
+	*/
 
 
 	c = new Cube();
 	c->load();
 	c->m_transform.m_translation = Vector3D();
+
 	cubes.push_back(c);
 
+	camera_transform.m_translation = Vector3D(0, 0, -2);
 
-	camera_transform.m_translation = Vector3D(0,3,-3);
-	camera_transform.m_rotation = Vector3D(0, -30 * M_PI / 180, -3);
-	std::cout << camera_transform.m_rotation.m_y << std::endl;
+	//camera_transform.m_translation = Vector3D(0,3,-3);
+	//camera_transform.m_rotation = Vector3D(0, -30 * M_PI / 180, -3);
+	//std::cout << camera_transform.m_rotation.m_y << std::endl;
 
+	/*
 	for (int i = 0; i < 5; i++) {
 		Cube* cb = new Cube();
 		cb->load();
@@ -58,9 +63,11 @@ void AppWindow::OnCreate()
 		cb->m_transform.m_scale = Cube::getRandom(3);
 		cb->m_transform.m_rotation = Cube::getRandom(5);
 	}
-
+	*/
 
 }
+
+
 
 bool isMoving = false;
 float dir = 0.f;
@@ -79,7 +86,7 @@ void AppWindow::OnUpdate()
 
 	
 	InputSystem::get()->Update();
-	InputSystem::get()->ShowCursor(false);
+	//InputSystem::get()->ShowCursor(false);
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,  0, 0.3f, 0.4f, 1);
 
@@ -129,11 +136,11 @@ void AppWindow::OnUpdate()
 	}
 
 
-	c->Update(m_delta_time, view_matrix, projection_matrix);
-	c->Draw();
+	//c->Update(m_delta_time, view_matrix, projection_matrix);
+	//c->Draw();
 
-	q->Update(m_delta_time, view_matrix, projection_matrix);
-	q->Draw();
+	//q->Update(m_delta_time, view_matrix, projection_matrix);
+	//q->Draw();
 	//if(first)
 		//first = false;
 	
@@ -321,6 +328,9 @@ void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_p
 	//some object picking stuff
 	if(selected)
 		selected->m_transform.m_translation = ray;
+
+
+	//InputSystem::get()->SetCursorPos({ (int) width /2, (int)height /2});
 	
 }
 
@@ -342,6 +352,8 @@ void AppWindow::onLeftMouseDown(const Point& delta_mouse_point)
 	c->m_transform.m_scale = Vector3D(0.2f,0.2f,0.2f);
 
 	std::cout << "(" << newR.m_x << "," << newR.m_y << "," << newR.m_z << ")\n";
+
+
 
 }
 

@@ -10,7 +10,7 @@ Cube::Cube(std::string name): GameObject(name) {}
 
 bool Cube::load()
 {
-
+	
 	this->cube_list = {
 		{Vector3D(-0.5f, -0.5f, -0.5f), getRandom(2), getRandom(2)},
 		{Vector3D(-0.5f,  0.5f, -0.5f), getRandom(2), getRandom(2)},
@@ -110,16 +110,24 @@ void Cube::Draw() {
 	GraphicsEngine::get()->getImmediateDeviceContext()->drawIndexedList(m_ib->getSizeIndexList(), 0, 0);
 }
 
-
+float m_angle = 0;
+#include <iostream>
 void Cube::Update(float delta_time, Matrix4x4 view_matrix, Matrix4x4 projection_matrix)
 {
 	
 	constant cc;
 
-	cc.m_angle = delta_time;
+	if(doOnUpdate)
+		doOnUpdate();
+
+	m_angle += delta_time;
+
+	cc.m_angle = m_angle;
 	cc.m_world = this->m_transform.GetTransformationMatrix();
 	cc.m_view = view_matrix;
 	cc.m_proj = projection_matrix;
+	cc.m_color = m_color;
+	cc.isRandom = isRainbow;
 
 	m_cb->update(GraphicsEngine::get()->getImmediateDeviceContext(), &cc);
 

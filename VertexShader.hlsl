@@ -18,6 +18,8 @@ cbuffer constant : register(b0)
     row_major float4x4 m_view;
     row_major float4x4 m_proj;
     float m_angle;
+    float3 m_color;
+    bool isRandom;
 }
 
 VS_OUTPUT vsmain(VS_INPUT input)

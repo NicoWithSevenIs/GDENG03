@@ -109,6 +109,11 @@ void InputSystem::ShowCursor(bool value)
 	::ShowCursor(value);
 }
 
+void InputSystem::SetCursorPos(const Point& point)
+{
+	::SetCursorPos(point.m_x, point.m_y);
+}
+
 InputSystem* InputSystem::get()
 {
 	static InputSystem system;

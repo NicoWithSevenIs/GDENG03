@@ -14,6 +14,7 @@
 #include "Game Engine/Graphics Engine/PixelShader/PixelShader.h"
 #include "Game Engine/Graphics Engine/ConstantBuffer/ConstantBuffer.h"
 
+#include <functional>
 
 __declspec(align(16))
 struct constant
@@ -22,6 +23,8 @@ struct constant
 	Matrix4x4 m_view;
 	Matrix4x4 m_proj;
 	float m_angle;
+	Vector3D m_color;
+	UINT isRandom;
 };
 
 
@@ -41,6 +44,13 @@ class GameObject
 		PixelShader* m_ps;
 
 		ConstantBuffer* m_cb;
+
+		
+
+	public:
+		Vector3D m_color = Vector3D(1,0,1);
+		bool isRainbow = true;
+		std::function<void()> doOnUpdate = nullptr;
 
 	public:
 

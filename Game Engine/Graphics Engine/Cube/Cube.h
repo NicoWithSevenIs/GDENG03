@@ -18,6 +18,8 @@ class Cube: public GameObject {
 		float pace = 0.1f;
 		float dir = 1.f;
 
+
+
 	public:
 		Cube();
 		Cube(std::string name);
