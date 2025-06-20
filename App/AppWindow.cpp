@@ -40,37 +40,114 @@ void AppWindow::OnCreate()
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
 
-	q = new Quad();
-	q->load();
-	q->m_transform.m_translation = Vector3D(0,-1,0);
-	q->m_transform.m_rotation.m_x = 270 * M_PI / 180;
-	q->m_transform.m_scale = Vector3D(5,5,5);
-	
-	
+	for (int i = 0; i < 15; i++) {
+		Cube* cb = new Cube();
+		cb->load();
+		cubes.push_back(cb);
+		cb->isRainbow = false;
+		cb->m_transform.m_scale = Vector3D(0.05, 3.5,2);
+		cb->m_color = Vector3D(1, 1, 1);
+	}
+
+	auto rad = [](Vector3D v) {
+		Vector3D cv = Vector3D();
+		cv.m_x = (v.m_x * M_PI) / 180;
+		cv.m_y = (v.m_y * M_PI) / 180;
+		cv.m_z = (v.m_z * M_PI) / 180;
+		return cv;
+	};
 
 
-	c = new Cube();
-	c->load();
-	c->m_transform.m_translation = Vector3D(0,0.9,0);
-	cubes.push_back(c);
+	//Lower Three Left to Right
+	/*
+		/\/\/\
+	*/
+	cubes[0]->m_transform.m_rotation = rad(Vector3D(0,0,20));
+	cubes[0]->m_color = Vector3D(0.8, 0.8, 0.8);
+	cubes[1]->m_transform.m_translation =  Vector3D(1.2, 0, 0);
+	cubes[1]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
 
-	c1 = new Cube();
-	c1->load();
-	c1->m_transform.m_translation = Vector3D(-1.5, 2.0, 0);
-	cubes.push_back(c1);
+	cubes[2]->m_transform.m_translation = Vector3D(2.4, 0, 0);
+	cubes[2]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
+	cubes[2]->m_color = Vector3D(0.8, 0.8, 0.8);
+	cubes[3]->m_transform.m_translation = Vector3D(3.6, 0, 0);
+	cubes[3]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
 
-	c2 = new Cube();
-	c2->load();
-	c2->m_transform.m_translation = Vector3D(-1.5, 3.0, -2.0);
-	cubes.push_back(c2);
+	cubes[4]->m_transform.m_translation = Vector3D(4.8, 0, 0);
+	cubes[4]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
+	cubes[4]->m_color = Vector3D(0.8, 0.8, 0.8);
+	cubes[5]->m_transform.m_translation = Vector3D(6, 0, 0);
+	cubes[5]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
 
 
-	//camera_transform.m_translation = Vector3D(0,3,-3);
+	//Lower 3 Roofs
+	/*
+	    ______
+		/\/\/\
+	*/
+	cubes[6]->m_transform.m_rotation = rad(Vector3D(0, 0, 90));
+	cubes[6]->m_transform.m_translation = Vector3D(1.2, 1.62, 0);
+	cubes[6]->m_color = Vector3D(0.8, 0.8, 0.8);
+	cubes[7]->m_transform.m_rotation = rad(Vector3D(0, 0, 90));
+	cubes[7]->m_transform.m_translation = Vector3D(4.8, 1.62, 0);
+	cubes[7]->m_color = Vector3D(0.8, 0.8, 0.8);
+
+
+	//Middle Two Left to Right
+	/*
+		 /\/\
+		______
+		/\/\/\
+	*/
+
+	cubes[8]->m_transform.m_translation = Vector3D(1.2, 3.3, 0);
+	cubes[8]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
+	cubes[8]->m_color = Vector3D(0.8, 0.8, 0.8);
+	cubes[9]->m_transform.m_translation = Vector3D(2.4, 3.3, 0);
+	cubes[9]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
+
+	cubes[10]->m_transform.m_translation = Vector3D(3.6, 3.3, 0);
+	cubes[10]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
+	cubes[10]->m_color = Vector3D(0.8, 0.8, 0.8);
+	cubes[11]->m_transform.m_translation = Vector3D(4.8, 3.3, 0);
+	cubes[11]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
+
+	//Middle Roof
+	/*
+	      __
+		 /\/\
+		______
+		/\/\/\
+	*/
+
+	cubes[12]->m_transform.m_rotation = rad(Vector3D(0, 0, 90));
+	cubes[12]->m_transform.m_translation = Vector3D(3, 1.62 + 3.3, 0);
+	cubes[12]->m_color = Vector3D(0.8, 0.8, 0.8);
+
+	//Upper 
+	/*
+	      /\
+		  __
+		 /\/\
+		______
+		/\/\/\
+	*/
+
+	cubes[13]->m_transform.m_translation = Vector3D(2.4, 6.6, 0);
+	cubes[13]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
+	cubes[13]->m_color = Vector3D(0.8, 0.8, 0.8);
+	cubes[14]->m_transform.m_translation = Vector3D(3.6, 6.6, 0);
+	cubes[14]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
+
+
+	//visual clarity
+
+
+	camera_transform.m_translation = Vector3D(0,0,-3);
 	//camera_transform.m_rotation = Vector3D(0, -30 * M_PI / 180, -3);
 	//std::cout << camera_transform.m_rotation.m_y << std::endl;
 
-	/*
-	for (int i = 0; i < 5; i++) {
+	/*; 5; i++) {
 		Cube* cb = new Cube();
 		cb->load();
 		cubes.push_back(cb);
@@ -128,8 +205,8 @@ void AppWindow::OnUpdate()
 	//this->camera_transform.m_translation = this->camera_transform.m_translation + forward + right + Vector3D(0, m_delta_time * up, 0);
 	//this->camera_transform.m_rotation = Vector3D(xRot, yRot, 0);
 
-	camera_transform.m_translation = Vector3D(2.74189, 2.72838, -2.9508);
-	camera_transform.m_rotation = Vector3D(-0.2439, 0.725, 0);
+	this->camera_transform.m_translation = Vector3D(6.40453, 5.29093, -5.60501);
+	this->camera_transform.m_rotation = Vector3D(-0.3887, 0.540199, 0);
 
 	view_matrix = Matrix4x4(this->camera_transform.GetTransformationMatrix());
 	view_matrix.inverse();
@@ -153,14 +230,7 @@ void AppWindow::OnUpdate()
 	}
 
 
-	c->Update(m_delta_time, view_matrix, projection_matrix);
-	c->Draw();
-	c1->Update(m_delta_time, view_matrix, projection_matrix);
-	c1->Draw();
-	c2->Update(m_delta_time, view_matrix, projection_matrix);
-	c2->Draw();
-	q->Update(m_delta_time, view_matrix, projection_matrix);
-	q->Draw();
+
 	//if(first)
 		//first = false;
 	
