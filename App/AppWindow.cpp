@@ -20,7 +20,13 @@ AppWindow::~AppWindow()
 }
 
 int current_cube = 0;
+float t = 0;
+float sign = 1.f;
 
+float x = 0; 
+float y = 0;
+float max_x = 3;
+float max_y = 3;
 void AppWindow::OnCreate()
 {
 	Window::OnCreate();
@@ -33,31 +39,45 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
-	/*
+	
 	q = new Quad();
 	q->load();
 	//q->m_transform.m_translation = Vector3D(0,-10,-0.15);
 	q->m_transform.m_rotation.m_x = 270 * M_PI / 180;
 	q->m_transform.m_scale = Vector3D(5,5,5);
-	*/
+	
 
 
 
 	c = new Cube();
 	c->load();
 	c->m_transform.m_translation = Vector3D();
-	c->isRainbow = false;
-	c->m_color = Vector3D(1, 1, 1);
 	cubes.push_back(c);
 
 	float rot_speed = 1.f;
-	c->doOnUpdate = [=]() {
 
-		c->m_transform.m_rotation.m_x += Time::deltaTime() * rot_speed;
-		c->m_transform.m_rotation.m_y += Time::deltaTime() * rot_speed;
-		c->m_transform.m_rotation.m_z += Time::deltaTime() * rot_speed;
+	auto lerp = [](Vector3D start, Vector3D end, float t){
+		return start + ( end - start ) * t;
+	};
 
-		std::cout << "(" << c->m_transform.m_rotation.m_x << "," << c->m_transform.m_rotation.m_y << "," << c->m_transform.m_rotation.m_z << ")\n";
+	
+
+	c->doOnUpdate = [&]() {
+		
+		t += Time::deltaTime() * sign;
+
+		if (t < 0 )
+			sign = 1;
+		else if(t > 1)
+			sign = -1;
+
+		c->m_transform.m_scale = lerp(Vector3D(1,1,1), Vector3D(0.25f, 0.25f, 0.25f), t);
+		c->m_transform.m_translation = lerp(Vector3D(3, 3, 0), Vector3D(-3, -3, 0), t);
+		//std::cout << t << std::endl;
+		//std::cout << "(" << c->m_transform.m_scale.m_x << "," << c->m_transform.m_scale.m_y << "," << c->m_transform.m_scale.m_z << ")\n";
+
+		
+
 	};
 
 	camera_transform.m_translation = Vector3D(0, 0, -2);
@@ -151,8 +171,8 @@ void AppWindow::OnUpdate()
 	//c->Update(m_delta_time, view_matrix, projection_matrix);
 	//c->Draw();
 
-	//q->Update(m_delta_time, view_matrix, projection_matrix);
-	//q->Draw();
+	q->Update(m_delta_time, view_matrix, projection_matrix);
+	q->Draw();
 	//if(first)
 		//first = false;
 	
