@@ -6,26 +6,20 @@ Cube::Cube() : GameObject("Cube") {}
 
 Cube::Cube(std::string name): GameObject(name) {}
 
-Vector3D getRandom() {
-	Vector3D r;
-	r.m_x = rand() % 2;
-	r.m_y = rand() % 2;
-	r.m_z = rand() % 2;
-	return r;
-}
+
 
 bool Cube::load()
 {
 
 	this->cube_list = {
-		{Vector3D(-0.5f, -0.5f, -0.5f), getRandom(), getRandom()},
-		{Vector3D(-0.5f,  0.5f, -0.5f), getRandom(), getRandom()},
-		{Vector3D(0.5f,  0.5f, -0.5f), getRandom(), getRandom()},
-		{Vector3D(0.5f, -0.5f, -0.5f), getRandom(), getRandom()},
-		{Vector3D(0.5f, -0.5f,  0.5f), getRandom(), getRandom()},
-		{Vector3D(0.5f,  0.5f,  0.5f), getRandom(), getRandom()},
-		{Vector3D(-0.5f,  0.5f,  0.5f), getRandom(), getRandom()},
-		{Vector3D(-0.5f, -0.5f,  0.5f), getRandom(), getRandom()},
+		{Vector3D(-0.5f, -0.5f, -0.5f), getRandom(2), getRandom(2)},
+		{Vector3D(-0.5f,  0.5f, -0.5f), getRandom(2), getRandom(2)},
+		{Vector3D(0.5f,   0.5f, -0.5f), getRandom(2), getRandom(2)},
+		{Vector3D(0.5f,  -0.5f, -0.5f), getRandom(2), getRandom(2)},
+		{Vector3D(0.5f,  -0.5f,  0.5f), getRandom(2), getRandom(2)},
+		{Vector3D(0.5f,   0.5f,  0.5f), getRandom(2), getRandom(2)},
+		{Vector3D(-0.5f,  0.5f,  0.5f), getRandom(2), getRandom(2)},
+		{Vector3D(-0.5f, -0.5f,  0.5f), getRandom(2), getRandom(2)},
 	};
 	
 	this->index_list =

@@ -104,6 +104,11 @@ void InputSystem::Update()
 	}
 }
 
+void InputSystem::ShowCursor(bool value)
+{
+	::ShowCursor(value);
+}
+
 InputSystem* InputSystem::get()
 {
 	static InputSystem system;

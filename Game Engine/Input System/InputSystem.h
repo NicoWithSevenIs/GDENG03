@@ -24,6 +24,7 @@ class InputSystem {
 		void AddListener(InputListener* listener);
 		void RemoveListener(InputListener* listener);
 		void Update();
+		void ShowCursor(bool value);
 
 	public:
 		static InputSystem* get();

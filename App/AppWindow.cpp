@@ -19,6 +19,8 @@ AppWindow::~AppWindow()
 {
 }
 
+int current_cube = 0;
+
 void AppWindow::OnCreate()
 {
 	Window::OnCreate();
@@ -41,11 +43,22 @@ void AppWindow::OnCreate()
 	c = new Cube();
 	c->load();
 	c->m_transform.m_translation = Vector3D();
+	cubes.push_back(c);
 
 
 	camera_transform.m_translation = Vector3D(0,3,-3);
 	camera_transform.m_rotation = Vector3D(0, -30 * M_PI / 180, -3);
 	std::cout << camera_transform.m_rotation.m_y << std::endl;
+
+	for (int i = 0; i < 5; i++) {
+		Cube* cb = new Cube();
+		cb->load();
+		cubes.push_back(cb);
+		cb->m_transform.m_translation = Cube::getRandom(10) - Cube::getRandom(10);
+		cb->m_transform.m_scale = Cube::getRandom(3);
+		cb->m_transform.m_rotation = Cube::getRandom(5);
+	}
+
 
 }
 
@@ -66,6 +79,8 @@ void AppWindow::OnUpdate()
 
 	
 	InputSystem::get()->Update();
+	InputSystem::get()->ShowCursor(false);
+
 	GraphicsEngine::get()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,  0, 0.3f, 0.4f, 1);
 
 	RECT rc = this->getClientWindowRect();
@@ -106,16 +121,13 @@ void AppWindow::OnUpdate()
 	);
 	*/
 	
-	/*
+
 	//draw here 
 	for (auto c : cubes) {
-		//if (updatetransforms || first) {
-			c->Update(m_delta_time, view_matrix, projection_matrix);
-		//}
+		c->Update(m_delta_time, view_matrix, projection_matrix);
 		c->Draw();
-		
 	}
-	*/
+
 
 	c->Update(m_delta_time, view_matrix, projection_matrix);
 	c->Draw();
@@ -166,10 +178,9 @@ float transform_speed_multiplier = 16;
 void AppWindow::onKeyDown(int key)
 {
 
-	
 	float turn_speed = m_delta_time * multiplier;
-
 	switch (key) {
+
 		case 'W': dir = 1.f; break;
 		case 'S': dir = -1.f;  break;
 
@@ -179,14 +190,16 @@ void AppWindow::onKeyDown(int key)
 		case 'Q': up = -1.f; break;
 		case 'E':  up = 1.f;  break;
 
+	
+
 	}
 
 	Vector3D* to_modify = nullptr;
 
 	switch (transform_state) {
-		case 0: to_modify = &c->m_transform.m_translation; break;
-		case 1: to_modify = &c->m_transform.m_scale; break;
-		case 2: to_modify = &c->m_transform.m_rotation; break;
+		case 0: to_modify = &cubes[current_cube]->m_transform.m_translation; break;
+		case 1: to_modify = &cubes[current_cube]->m_transform.m_scale; break;
+		case 2: to_modify = &cubes[current_cube]->m_transform.m_rotation; break;
 	}
 
 	if(!to_modify)
@@ -203,9 +216,9 @@ void AppWindow::onKeyDown(int key)
 		case 'O': to_modify->m_z += transform_speed; break;
 	}
 
-	c->m_transform.m_scale.m_x = (((0.1f) > (c->m_transform.m_scale.m_x)) ? (0.1f) : (c->m_transform.m_scale.m_x));
-	c->m_transform.m_scale.m_y = (((0.1f) > (c->m_transform.m_scale.m_y)) ? (0.1f) : (c->m_transform.m_scale.m_y));
-	c->m_transform.m_scale.m_z = (((0.1f) > (c->m_transform.m_scale.m_z)) ? (0.1f) : (c->m_transform.m_scale.m_z));
+	cubes[current_cube]->m_transform.m_scale.m_x = max(0.1, cubes[current_cube]->m_transform.m_scale.m_x);
+	cubes[current_cube]->m_transform.m_scale.m_y = max(0.1, cubes[current_cube]->m_transform.m_scale.m_y);
+	cubes[current_cube]->m_transform.m_scale.m_z = max(0.1, cubes[current_cube]->m_transform.m_scale.m_z);
 }
 
 void AppWindow::onKeyUp(int key)
@@ -244,11 +257,15 @@ void AppWindow::onKeyUp(int key)
 			break;
 
 		case 'R':
-			c->m_transform.m_translation = Vector3D();
-			c->m_transform.m_scale = Vector3D(1,1,1);
-			c->m_transform.m_rotation = Vector3D();
+			cubes[current_cube]->m_transform.m_translation = Vector3D();
+			cubes[current_cube]->m_transform.m_scale = Vector3D(1,1,1);
+			cubes[current_cube]->m_transform.m_rotation = Vector3D();
 			std::cout << "Reset mr. cube" << std::endl;
 			break;
+
+		case 'N': current_cube = max(current_cube - 1, 0);break;
+		case 'M': current_cube = min(current_cube + 1, cubes.size()-1); break;
+
 
 	}
 }
