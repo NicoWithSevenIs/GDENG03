@@ -39,24 +39,31 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
-	/*
+
 	q = new Quad();
 	q->load();
-	//q->m_transform.m_translation = Vector3D(0,-10,-0.15);
+	q->m_transform.m_translation = Vector3D(0,-1,0);
 	q->m_transform.m_rotation.m_x = 270 * M_PI / 180;
 	q->m_transform.m_scale = Vector3D(5,5,5);
 	
-		*/
+	
 
 
 	c = new Cube();
 	c->load();
-	c->m_transform.m_translation = Vector3D();
+	c->m_transform.m_translation = Vector3D(0,0.9,0);
 	cubes.push_back(c);
 
+	c1 = new Cube();
+	c1->load();
+	c1->m_transform.m_translation = Vector3D(-1.5, 2.0, 0);
+	cubes.push_back(c1);
 
+	c2 = new Cube();
+	c2->load();
+	c2->m_transform.m_translation = Vector3D(-1.5, 3.0, -2.0);
+	cubes.push_back(c2);
 
-	camera_transform.m_translation = Vector3D(0, 0, -3);
 
 	//camera_transform.m_translation = Vector3D(0,3,-3);
 	//camera_transform.m_rotation = Vector3D(0, -30 * M_PI / 180, -3);
@@ -118,9 +125,11 @@ void AppWindow::OnUpdate()
 	Vector3D forward = camera_matrix.getLocalZDirection() * m_delta_time * dir;
 	Vector3D right = camera_matrix.getLocalXDirection() * m_delta_time * r;
 
-	this->camera_transform.m_translation = this->camera_transform.m_translation + forward + right + Vector3D(0, m_delta_time * up, 0);
-	this->camera_transform.m_rotation = Vector3D(xRot, yRot, 0);
+	//this->camera_transform.m_translation = this->camera_transform.m_translation + forward + right + Vector3D(0, m_delta_time * up, 0);
+	//this->camera_transform.m_rotation = Vector3D(xRot, yRot, 0);
 
+	camera_transform.m_translation = Vector3D(2.74189, 2.72838, -2.9508);
+	camera_transform.m_rotation = Vector3D(-0.2439, 0.725, 0);
 
 	view_matrix = Matrix4x4(this->camera_transform.GetTransformationMatrix());
 	view_matrix.inverse();
@@ -146,9 +155,12 @@ void AppWindow::OnUpdate()
 
 	c->Update(m_delta_time, view_matrix, projection_matrix);
 	c->Draw();
-
-	//q->Update(m_delta_time, view_matrix, projection_matrix);
-	//q->Draw();
+	c1->Update(m_delta_time, view_matrix, projection_matrix);
+	c1->Draw();
+	c2->Update(m_delta_time, view_matrix, projection_matrix);
+	c2->Draw();
+	q->Update(m_delta_time, view_matrix, projection_matrix);
+	q->Draw();
 	//if(first)
 		//first = false;
 	
@@ -205,19 +217,7 @@ void AppWindow::onKeyDown(int key)
 		case 'Q': up = -1.f; break;
 		case 'E':  up = 1.f;  break;
 
-		case '\r': 
-			auto lerp = [](Vector3D start, Vector3D end, float t) {
-				return start + (end - start) * t;
-			};
 
-			c->doOnUpdate = [=]() {
-				t += Time::deltaTime();
-
-				if (t <= 1) {
-					c->m_transform.m_scale = lerp(Vector3D(1,1,1), Vector3D(4,0.01,4), t);
-				}
-			};
-		break;
 	}
 
 	Vector3D* to_modify = nullptr;
@@ -292,9 +292,14 @@ void AppWindow::onKeyUp(int key)
 		case 'N': current_cube = max(current_cube - 1, 0);break;
 		case 'M': current_cube = min(current_cube + 1, cubes.size()-1); break;
 
-
+		case '\r':
+			std::cout << "Pos: (" << camera_transform.m_translation.m_x << "," << camera_transform.m_translation.m_y << "," << camera_transform.m_translation.m_z << ")\n";
+			std::cout << "Rot: (" << camera_transform.m_rotation.m_x << "," << camera_transform.m_rotation.m_y << "," << camera_transform.m_rotation.m_z << ")\n";
+			break;
 	}
 }
+
+//I got the values of the camera transform  by aiming the camera at a certain angle and position then printing it out and forcing the camera to face that way in each update call
 
 
 

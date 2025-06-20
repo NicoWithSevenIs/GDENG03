@@ -24,6 +24,8 @@ class AppWindow : public Window, public InputListener {
 		Transform camera_transform;
 
 		Cube* c;
+		Cube* c1;
+		Cube* c2;
 		Quad* q;
 
 	private:
