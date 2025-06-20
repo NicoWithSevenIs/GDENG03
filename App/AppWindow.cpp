@@ -42,11 +42,23 @@ void AppWindow::OnCreate()
 	*/
 
 
+
 	c = new Cube();
 	c->load();
 	c->m_transform.m_translation = Vector3D();
-
+	c->isRainbow = false;
+	c->m_color = Vector3D(1, 1, 1);
 	cubes.push_back(c);
+
+	float rot_speed = 1.f;
+	c->doOnUpdate = [=]() {
+
+		c->m_transform.m_rotation.m_x += Time::deltaTime() * rot_speed;
+		c->m_transform.m_rotation.m_y += Time::deltaTime() * rot_speed;
+		c->m_transform.m_rotation.m_z += Time::deltaTime() * rot_speed;
+
+		std::cout << "(" << c->m_transform.m_rotation.m_x << "," << c->m_transform.m_rotation.m_y << "," << c->m_transform.m_rotation.m_z << ")\n";
+	};
 
 	camera_transform.m_translation = Vector3D(0, 0, -2);
 
