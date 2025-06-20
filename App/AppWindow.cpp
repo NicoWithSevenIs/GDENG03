@@ -39,7 +39,7 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
-	
+	/*
 	q = new Quad();
 	q->load();
 	//q->m_transform.m_translation = Vector3D(0,-10,-0.15);
@@ -53,34 +53,30 @@ void AppWindow::OnCreate()
 	c->load();
 	c->m_transform.m_translation = Vector3D();
 	cubes.push_back(c);
-
+	*/
 	float rot_speed = 1.f;
 
 	auto lerp = [](Vector3D start, Vector3D end, float t){
 		return start + ( end - start ) * t;
 	};
 
+	for (int i = 0; i < 50; i++) {
+		Cube* cb = new Cube();
+		cb->load();
+		cubes.push_back(cb);
+		cb->m_transform.m_translation = Cube::getRandom(5) - Cube::getRandom(5);
+		cb->m_transform.m_scale = Vector3D(0.3f,0.3f,0.3f);
+		cb->doOnUpdate = [=]() {
+			cb->m_transform.m_rotation.m_x += Time::deltaTime();
+			cb->m_transform.m_rotation.m_y += Time::deltaTime();
+			cb->m_transform.m_rotation.m_z += Time::deltaTime();
+		};
+	}
 	
+	std::cout << cubes.size();
 
-	c->doOnUpdate = [&]() {
-		
-		t += Time::deltaTime() * sign;
 
-		if (t < 0 )
-			sign = 1;
-		else if(t > 1)
-			sign = -1;
-
-		c->m_transform.m_scale = lerp(Vector3D(1,1,1), Vector3D(0.25f, 0.25f, 0.25f), t);
-		c->m_transform.m_translation = lerp(Vector3D(3, 3, 0), Vector3D(-3, -3, 0), t);
-		//std::cout << t << std::endl;
-		//std::cout << "(" << c->m_transform.m_scale.m_x << "," << c->m_transform.m_scale.m_y << "," << c->m_transform.m_scale.m_z << ")\n";
-
-		
-
-	};
-
-	camera_transform.m_translation = Vector3D(0, 0, -2);
+	camera_transform.m_translation = Vector3D(0, 0, -3);
 
 	//camera_transform.m_translation = Vector3D(0,3,-3);
 	//camera_transform.m_rotation = Vector3D(0, -30 * M_PI / 180, -3);
@@ -171,8 +167,8 @@ void AppWindow::OnUpdate()
 	//c->Update(m_delta_time, view_matrix, projection_matrix);
 	//c->Draw();
 
-	q->Update(m_delta_time, view_matrix, projection_matrix);
-	q->Draw();
+	//q->Update(m_delta_time, view_matrix, projection_matrix);
+	//q->Draw();
 	//if(first)
 		//first = false;
 	

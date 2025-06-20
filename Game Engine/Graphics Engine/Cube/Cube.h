@@ -17,7 +17,7 @@ class Cube: public GameObject {
 
 		float pace = 0.1f;
 		float dir = 1.f;
-
+		float m_angle = 0;
 
 
 	public:

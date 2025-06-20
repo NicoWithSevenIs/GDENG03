@@ -110,7 +110,7 @@ void Cube::Draw() {
 	GraphicsEngine::get()->getImmediateDeviceContext()->drawIndexedList(m_ib->getSizeIndexList(), 0, 0);
 }
 
-float m_angle = 0;
+
 #include <iostream>
 void Cube::Update(float delta_time, Matrix4x4 view_matrix, Matrix4x4 projection_matrix)
 {
