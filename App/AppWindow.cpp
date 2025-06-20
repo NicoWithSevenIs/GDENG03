@@ -46,34 +46,14 @@ void AppWindow::OnCreate()
 	q->m_transform.m_rotation.m_x = 270 * M_PI / 180;
 	q->m_transform.m_scale = Vector3D(5,5,5);
 	
-
+		*/
 
 
 	c = new Cube();
 	c->load();
 	c->m_transform.m_translation = Vector3D();
 	cubes.push_back(c);
-	*/
-	float rot_speed = 1.f;
 
-	auto lerp = [](Vector3D start, Vector3D end, float t){
-		return start + ( end - start ) * t;
-	};
-
-	for (int i = 0; i < 50; i++) {
-		Cube* cb = new Cube();
-		cb->load();
-		cubes.push_back(cb);
-		cb->m_transform.m_translation = Cube::getRandom(5) - Cube::getRandom(5);
-		cb->m_transform.m_scale = Vector3D(0.3f,0.3f,0.3f);
-		cb->doOnUpdate = [=]() {
-			cb->m_transform.m_rotation.m_x += Time::deltaTime();
-			cb->m_transform.m_rotation.m_y += Time::deltaTime();
-			cb->m_transform.m_rotation.m_z += Time::deltaTime();
-		};
-	}
-	
-	std::cout << cubes.size();
 
 
 	camera_transform.m_translation = Vector3D(0, 0, -3);
@@ -164,8 +144,8 @@ void AppWindow::OnUpdate()
 	}
 
 
-	//c->Update(m_delta_time, view_matrix, projection_matrix);
-	//c->Draw();
+	c->Update(m_delta_time, view_matrix, projection_matrix);
+	c->Draw();
 
 	//q->Update(m_delta_time, view_matrix, projection_matrix);
 	//q->Draw();
@@ -225,8 +205,19 @@ void AppWindow::onKeyDown(int key)
 		case 'Q': up = -1.f; break;
 		case 'E':  up = 1.f;  break;
 
-	
+		case '\r': 
+			auto lerp = [](Vector3D start, Vector3D end, float t) {
+				return start + (end - start) * t;
+			};
 
+			c->doOnUpdate = [=]() {
+				t += Time::deltaTime();
+
+				if (t <= 1) {
+					c->m_transform.m_scale = lerp(Vector3D(1,1,1), Vector3D(4,0.01,4), t);
+				}
+			};
+		break;
 	}
 
 	Vector3D* to_modify = nullptr;
@@ -251,9 +242,9 @@ void AppWindow::onKeyDown(int key)
 		case 'O': to_modify->m_z += transform_speed; break;
 	}
 
-	cubes[current_cube]->m_transform.m_scale.m_x = max(0.1, cubes[current_cube]->m_transform.m_scale.m_x);
-	cubes[current_cube]->m_transform.m_scale.m_y = max(0.1, cubes[current_cube]->m_transform.m_scale.m_y);
-	cubes[current_cube]->m_transform.m_scale.m_z = max(0.1, cubes[current_cube]->m_transform.m_scale.m_z);
+	//cubes[current_cube]->m_transform.m_scale.m_x = max(0.1, cubes[current_cube]->m_transform.m_scale.m_x);
+	//cubes[current_cube]->m_transform.m_scale.m_y = max(0.1, cubes[current_cube]->m_transform.m_scale.m_y);
+	//cubes[current_cube]->m_transform.m_scale.m_z = max(0.1, cubes[current_cube]->m_transform.m_scale.m_z);
 }
 
 void AppWindow::onKeyUp(int key)
@@ -366,7 +357,7 @@ float z_offset = 0;
 
 void AppWindow::onLeftMouseDown(const Point& delta_mouse_point)
 {
-	if(selected)
+
 		return;
 
 	//z_offset -= 0.5;
