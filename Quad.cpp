@@ -10,10 +10,10 @@ bool Quad::load()
 {
 	this->strip_list = 
 	{
-		{Vector3D(-0.2f, 0.5f, 0.0f), Vector3D(1,1,1), Vector3D(1,1,1)},
-		{Vector3D(-0.2f, 0.9f, 0.0f), Vector3D(1,1,1), Vector3D(1,1,1)},
-		{Vector3D(0.2f,  0.5f, 0.0f), Vector3D(1,1,1), Vector3D(1,1,1)},
-		{Vector3D(0.2f, 0.9f, 0.0f), Vector3D(1,1,1), Vector3D(1,1,1)},
+		{Vector3D(-0.5f, -0.5f, 0.0f), Vector3D(1,1,1), Vector3D(1,1,1)},
+		{Vector3D(-0.5f, 0.5f, 0.0f), Vector3D(1,1,1), Vector3D(1,1,1)},
+		{Vector3D(0.5f,  -0.5f, 0.0f), Vector3D(1,1,1), Vector3D(1,1,1)},
+		{Vector3D(0.5f, 0.5f, 0.0f), Vector3D(1,1,1), Vector3D(1,1,1)},
 	};
 
 	this->m_vb = GraphicsEngine::get()->createVertexBuffer();

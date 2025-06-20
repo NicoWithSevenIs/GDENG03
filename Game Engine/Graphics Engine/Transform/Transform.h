@@ -26,6 +26,7 @@ class Transform
 			sm.SetScale(m_scale);
 			m *= sm;
 
+
 			Matrix4x4 rm;
 			rm.SetIdentity();
 			rm.setRotationX(m_rotation.m_x);
@@ -39,9 +40,11 @@ class Transform
 			rm.setRotationZ(m_rotation.m_z);
 			m *= rm;
 
+
 			Matrix4x4 tm;
 			tm.SetTranslation(m_translation);
 			m *= tm;
+	
 
 			this->m_transformation_matrix = m;
 

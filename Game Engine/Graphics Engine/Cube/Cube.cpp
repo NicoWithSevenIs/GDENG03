@@ -122,11 +122,6 @@ void Cube::Update(float delta_time, Matrix4x4 view_matrix, Matrix4x4 projection_
 	
 	constant cc;
 
-
-	m_transform.m_rotation.m_x += delta_time * dir * pace;
-	m_transform.m_rotation.m_y += delta_time * dir * pace;
-	m_transform.m_rotation.m_z += delta_time * dir * pace;
-
 	cc.m_angle = delta_time;
 	cc.m_world = this->m_transform.GetTransformationMatrix();
 	cc.m_view = view_matrix;

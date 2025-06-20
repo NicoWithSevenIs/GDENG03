@@ -59,6 +59,10 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height)
 	HRESULT depthStencilResult = device->CreateDepthStencilView(buffer, NULL, &m_dsv);
 	buffer->Release();
 
+
+
+
+
 	return true;
 }
 

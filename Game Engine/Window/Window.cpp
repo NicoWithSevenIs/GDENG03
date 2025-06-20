@@ -1,5 +1,5 @@
 #include "Window.h"
-
+#include "../../Time.h"
 Window* window = nullptr;
 
 Window::Window()
@@ -77,8 +77,8 @@ bool Window::broadcast()
 {
 	MSG msg;
 
-	window->OnUpdate();
-
+	//window->OnUpdate();
+	Time::LogFrameStart();
 	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -87,7 +87,7 @@ bool Window::broadcast()
 	window->OnUpdate();
 
 	Sleep(0);
-
+	Time::LogFrameEnd();
 	return true;
 }
 

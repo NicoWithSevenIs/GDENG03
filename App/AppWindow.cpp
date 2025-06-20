@@ -8,7 +8,8 @@
 #include <cstdlib>
 #include <algorithm>
 #include <DirectXMath.h>
-
+#include <corecrt_math_defines.h>
+#include "../Time.h"
 
 AppWindow::AppWindow()
 {
@@ -32,9 +33,9 @@ void AppWindow::OnCreate()
 
 	q = new Quad();
 	q->load();
-	q->m_transform.m_translation = Vector3D(0,-10,-0.15);
-	q->m_transform.m_rotation = Vector3D(0,0,0);
-	q->m_transform.m_scale = Vector3D(15,15,15);
+	//q->m_transform.m_translation = Vector3D(0,-10,-0.15);
+	q->m_transform.m_rotation.m_x = 270 * M_PI / 180;
+	q->m_transform.m_scale = Vector3D(5,5,5);
 
 
 	c = new Cube();
@@ -42,7 +43,9 @@ void AppWindow::OnCreate()
 	c->m_transform.m_translation = Vector3D();
 
 
-	camera_transform.m_translation = Vector3D(0,0,-2);
+	camera_transform.m_translation = Vector3D(0,3,-3);
+	camera_transform.m_rotation = Vector3D(0, -30 * M_PI / 180, -3);
+	std::cout << camera_transform.m_rotation.m_y << std::endl;
 
 }
 
@@ -61,6 +64,7 @@ void AppWindow::OnUpdate()
 {
 	Window::OnUpdate();
 
+	
 	InputSystem::get()->Update();
 	GraphicsEngine::get()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,  0, 0.3f, 0.4f, 1);
 
@@ -155,24 +159,53 @@ void AppWindow::UpdateQuadPosition()
 
 }
 
+
+int transform_state = 0;
+float transform_speed_multiplier = 16;
+
 void AppWindow::onKeyDown(int key)
 {
+
 	
 	float turn_speed = m_delta_time * multiplier;
+
 	switch (key) {
 		case 'W': dir = 1.f; break;
 		case 'S': dir = -1.f;  break;
 
-		
 		case 'A': r = -1.f; break;
 		case 'D': r = 1.f;  break;
 		
 		case 'Q': up = -1.f; break;
 		case 'E':  up = 1.f;  break;
-		
-		
+
 	}
+
+	Vector3D* to_modify = nullptr;
+
+	switch (transform_state) {
+		case 0: to_modify = &c->m_transform.m_translation; break;
+		case 1: to_modify = &c->m_transform.m_scale; break;
+		case 2: to_modify = &c->m_transform.m_rotation; break;
+	}
+
+	if(!to_modify)
+		return;
 	
+	float transform_speed = transform_speed_multiplier * Time::deltaTime();
+
+	switch (key) {
+		case 'I': to_modify->m_y += transform_speed; break;
+		case 'K': to_modify->m_y -= transform_speed; break;
+		case 'J': to_modify->m_x -= transform_speed; break;
+		case 'L': to_modify->m_x += transform_speed; break;
+		case 'U': to_modify->m_z -= transform_speed; break;
+		case 'O': to_modify->m_z += transform_speed; break;
+	}
+
+	c->m_transform.m_scale.m_x = (((0.1f) > (c->m_transform.m_scale.m_x)) ? (0.1f) : (c->m_transform.m_scale.m_x));
+	c->m_transform.m_scale.m_y = (((0.1f) > (c->m_transform.m_scale.m_y)) ? (0.1f) : (c->m_transform.m_scale.m_y));
+	c->m_transform.m_scale.m_z = (((0.1f) > (c->m_transform.m_scale.m_z)) ? (0.1f) : (c->m_transform.m_scale.m_z));
 }
 
 void AppWindow::onKeyUp(int key)
@@ -184,8 +217,39 @@ void AppWindow::onKeyUp(int key)
 		case 'D': r = 0.f;  break;
 		case 'Q': 
 		case 'E': up = 0.f;  break;
-		case 'R': for(auto i: cubes) i->release(); cubes.clear();
-		case 'V': updatetransforms = !updatetransforms; break;
+		
+		case '1': 
+			transform_state = 0;
+			std::cout << "Now translating mr. cube" << std::endl;
+		break;
+
+		case '2':
+			transform_state = 1;
+			std::cout << "Now scaling mr. cube" << std::endl;
+			break;
+
+		case '3':
+			transform_state = 2;
+			std::cout << "Now rotating mr. cube" << std::endl;
+			break;
+
+		case 'Z':
+			transform_speed_multiplier /= 2;
+			std::cout << "Halved Transform Speed" << std::endl;
+			break;
+
+		case 'X':
+			transform_speed_multiplier *= 2;
+			std::cout << "Doubled Transform Speed" << std::endl;
+			break;
+
+		case 'R':
+			c->m_transform.m_translation = Vector3D();
+			c->m_transform.m_scale = Vector3D(1,1,1);
+			c->m_transform.m_rotation = Vector3D();
+			std::cout << "Reset mr. cube" << std::endl;
+			break;
+
 	}
 }
 
