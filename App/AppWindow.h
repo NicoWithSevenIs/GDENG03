@@ -14,12 +14,13 @@
 #include <vector>
 #include "../Game Engine/Graphics Engine/Cube/Cube.h"
 #include "../Quad.h"
-
+#include "../ScreenCapture.h"
 
 class AppWindow : public Window, public InputListener {
 	
 	private:
 		SwapChain* m_swap_chain;
+		ScreenCapture* m_screen_capture;
 		std::vector<Cube*> cubes;
 		Transform camera_transform;
 

@@ -60,4 +60,6 @@ class GraphicsEngine {
 		PixelShader* createPixelShader(const void* shader_byte_code, size_t byte_code_size);
 		ConstantBuffer* createConstantBuffer();
 		IndexBuffer* createIndexBuffer();
+
+		ID3D11Device* getDevice() {return m_d3d_device;}
 };

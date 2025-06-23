@@ -150,6 +150,7 @@
     <ClCompile Include="Game Engine\Input System\InputSystem.cpp" />
     <ClCompile Include="Game Engine\Window\Window.cpp" />
     <ClCompile Include="Quad.cpp" />
+    <ClCompile Include="ScreenCapture.cpp" />
     <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +176,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Library\Interfaces\Singleton.h" />
     <ClInclude Include="Quad.h" />
+    <ClInclude Include="ScreenCapture.h" />
     <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>

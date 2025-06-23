@@ -72,6 +72,15 @@
     <Filter Include="Source Files\GameObject">
       <UniqueIdentifier>{fe46b49b-3a9e-4111-8730-b9027d052791}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Graphics Engine\Rendering\Screen Capture">
+      <UniqueIdentifier>{07cc0c92-e39c-4e47-84ce-b2aac1d8fb9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API">
+      <UniqueIdentifier>{b89222e0-2f51-41b9-815d-7cc3c2524630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API\FFMPEG">
+      <UniqueIdentifier>{abb41927-04a1-41a6-aeb7-186544e2a76e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App\main.cpp">
@@ -107,9 +116,6 @@
     <ClCompile Include="Game Engine\Input System\InputSystem.cpp">
       <Filter>Source Files\Managers\Input System</Filter>
     </ClCompile>
-    <ClCompile Include="Game Engine\Graphics Engine\SwapChain\SwapChain.cpp">
-      <Filter>Source Files\Graphics Engine\Rendering\Swap Chain</Filter>
-    </ClCompile>
     <ClCompile Include="Game Engine\Graphics Engine\DeviceContext\DeviceContext.cpp">
       <Filter>Source Files\Graphics Engine\Rendering\Device Context</Filter>
     </ClCompile>
@@ -121,6 +127,12 @@
     </ClCompile>
     <ClCompile Include="Time.cpp">
       <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Game Engine\Graphics Engine\SwapChain\SwapChain.cpp">
+      <Filter>Source Files\Graphics Engine\Rendering\Swap Chain</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenCapture.cpp">
+      <Filter>Source Files\Graphics Engine\Rendering\Screen Capture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +202,9 @@
     <ClInclude Include="Quad.h" />
     <ClInclude Include="Time.h">
       <Filter>Source Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenCapture.h">
+      <Filter>Source Files\Graphics Engine\Rendering\Screen Capture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

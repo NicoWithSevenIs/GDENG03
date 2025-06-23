@@ -68,7 +68,7 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height)
 
 bool SwapChain::present(bool vsync)
 {
-	m_swap_chain->Present(vsync, NULL);
+	m_swap_chain->Present(vsync, NULL); //60 FPS if true
 	return true;
 }
 

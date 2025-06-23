@@ -18,5 +18,6 @@ class SwapChain {
 
 		bool init(HWND hwnd, UINT width, UINT height);
 		bool present(bool vsync);
+		IDXGISwapChain* get() {return m_swap_chain;}
 		bool release();
 };

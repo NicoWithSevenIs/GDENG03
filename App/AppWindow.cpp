@@ -40,122 +40,16 @@ void AppWindow::OnCreate()
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
 
-	for (int i = 0; i < 15; i++) {
-		Cube* cb = new Cube();
-		cb->load();
-		cubes.push_back(cb);
-		cb->isRainbow = false;
-		cb->m_transform.m_scale = Vector3D(0.05, 3.5,2);
-		cb->m_color = Vector3D(1, 1, 1);
-	}
+	m_screen_capture = new ScreenCapture();
+	m_screen_capture->init(m_swap_chain->get(), GraphicsEngine::get()->getDevice(), 
+		GraphicsEngine::get()->getImmediateDeviceContext()->getContext());
 
-	auto rad = [](Vector3D v) {
-		Vector3D cv = Vector3D();
-		cv.m_x = (v.m_x * M_PI) / 180;
-		cv.m_y = (v.m_y * M_PI) / 180;
-		cv.m_z = (v.m_z * M_PI) / 180;
-		return cv;
-	};
-
-
-	//Lower Three Left to Right
-	/*
-		/\/\/\
-	*/
-	cubes[0]->m_transform.m_rotation = rad(Vector3D(0,0,20));
-	cubes[0]->m_color = Vector3D(0.8, 0.8, 0.8);
-	cubes[1]->m_transform.m_translation =  Vector3D(1.2, 0, 0);
-	cubes[1]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
-
-	cubes[2]->m_transform.m_translation = Vector3D(2.4, 0, 0);
-	cubes[2]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
-	cubes[2]->m_color = Vector3D(0.8, 0.8, 0.8);
-	cubes[3]->m_transform.m_translation = Vector3D(3.6, 0, 0);
-	cubes[3]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
-
-	cubes[4]->m_transform.m_translation = Vector3D(4.8, 0, 0);
-	cubes[4]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
-	cubes[4]->m_color = Vector3D(0.8, 0.8, 0.8);
-	cubes[5]->m_transform.m_translation = Vector3D(6, 0, 0);
-	cubes[5]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
-
-
-	//Lower 3 Roofs
-	/*
-	    ______
-		/\/\/\
-	*/
-	cubes[6]->m_transform.m_rotation = rad(Vector3D(0, 0, 90));
-	cubes[6]->m_transform.m_translation = Vector3D(1.2, 1.62, 0);
-	cubes[6]->m_color = Vector3D(0.8, 0.8, 0.8);
-	cubes[7]->m_transform.m_rotation = rad(Vector3D(0, 0, 90));
-	cubes[7]->m_transform.m_translation = Vector3D(4.8, 1.62, 0);
-	cubes[7]->m_color = Vector3D(0.8, 0.8, 0.8);
-
-
-	//Middle Two Left to Right
-	/*
-		 /\/\
-		______
-		/\/\/\
-	*/
-
-	cubes[8]->m_transform.m_translation = Vector3D(1.2, 3.3, 0);
-	cubes[8]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
-	cubes[8]->m_color = Vector3D(0.8, 0.8, 0.8);
-	cubes[9]->m_transform.m_translation = Vector3D(2.4, 3.3, 0);
-	cubes[9]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
-
-	cubes[10]->m_transform.m_translation = Vector3D(3.6, 3.3, 0);
-	cubes[10]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
-	cubes[10]->m_color = Vector3D(0.8, 0.8, 0.8);
-	cubes[11]->m_transform.m_translation = Vector3D(4.8, 3.3, 0);
-	cubes[11]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
-
-	//Middle Roof
-	/*
-	      __
-		 /\/\
-		______
-		/\/\/\
-	*/
-
-	cubes[12]->m_transform.m_rotation = rad(Vector3D(0, 0, 90));
-	cubes[12]->m_transform.m_translation = Vector3D(3, 1.62 + 3.3, 0);
-	cubes[12]->m_color = Vector3D(0.8, 0.8, 0.8);
-
-	//Upper 
-	/*
-	      /\
-		  __
-		 /\/\
-		______
-		/\/\/\
-	*/
-
-	cubes[13]->m_transform.m_translation = Vector3D(2.4, 6.6, 0);
-	cubes[13]->m_transform.m_rotation = rad(Vector3D(0, 0, 20));
-	cubes[13]->m_color = Vector3D(0.8, 0.8, 0.8);
-	cubes[14]->m_transform.m_translation = Vector3D(3.6, 6.6, 0);
-	cubes[14]->m_transform.m_rotation = rad(Vector3D(0, 0, -20));
-
-
-	//visual clarity
+	Cube* c = new Cube();
+	c->load();
+	cubes.push_back(c);
 
 
 	camera_transform.m_translation = Vector3D(0,0,-3);
-	//camera_transform.m_rotation = Vector3D(0, -30 * M_PI / 180, -3);
-	//std::cout << camera_transform.m_rotation.m_y << std::endl;
-
-	/*; 5; i++) {
-		Cube* cb = new Cube();
-		cb->load();
-		cubes.push_back(cb);
-		cb->m_transform.m_translation = Cube::getRandom(10) - Cube::getRandom(10);
-		cb->m_transform.m_scale = Cube::getRandom(3);
-		cb->m_transform.m_rotation = Cube::getRandom(5);
-	}
-	*/
 
 }
 
@@ -170,6 +64,8 @@ Matrix4x4 projection_matrix;
 Matrix4x4 view_matrix;
 float fov = 1.57f;
 Vector3D ray;
+
+float speed = 0;
 
 
 void AppWindow::OnUpdate()
@@ -188,25 +84,16 @@ void AppWindow::OnUpdate()
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 
-	unsigned long new_time = 0;
-
-	if (m_old_time)
-		new_time = ::GetTickCount() - m_old_time;
-	m_delta_time = new_time / 1000.0f;
-	m_old_time = ::GetTickCount();
-
-	m_angle += 0.1 * m_delta_time;
-
 
 	Matrix4x4 camera_matrix = this->camera_transform.GetTransformationMatrix();
-	Vector3D forward = camera_matrix.getLocalZDirection() * m_delta_time * dir;
-	Vector3D right = camera_matrix.getLocalXDirection() * m_delta_time * r;
+	Vector3D forward = camera_matrix.getLocalZDirection() * Time::deltaTime() * dir;
+	Vector3D right = camera_matrix.getLocalXDirection() * Time::deltaTime() * r;
 
-	//this->camera_transform.m_translation = this->camera_transform.m_translation + forward + right + Vector3D(0, m_delta_time * up, 0);
-	//this->camera_transform.m_rotation = Vector3D(xRot, yRot, 0);
+	this->camera_transform.m_translation = this->camera_transform.m_translation + forward + right + Vector3D(0, Time::deltaTime() * up, 0);
+	this->camera_transform.m_rotation = Vector3D(xRot, yRot, 0);
+	
+	//this->camera_transform.m_translation.m_x += Time::deltaTime();
 
-	this->camera_transform.m_translation = Vector3D(6.40453, 5.29093, -5.60501);
-	this->camera_transform.m_rotation = Vector3D(-0.3887, 0.540199, 0);
 
 	view_matrix = Matrix4x4(this->camera_transform.GetTransformationMatrix());
 	view_matrix.inverse();
@@ -222,10 +109,11 @@ void AppWindow::OnUpdate()
 	);
 	*/
 	
+	
 
 	//draw here 
 	for (auto c : cubes) {
-		c->Update(m_delta_time, view_matrix, projection_matrix);
+		c->Update(Time::deltaTime(), view_matrix, projection_matrix);
 		c->Draw();
 	}
 
@@ -234,6 +122,7 @@ void AppWindow::OnUpdate()
 	//if(first)
 		//first = false;
 	
+	m_screen_capture->Update();
 	
 	this->m_swap_chain->present(true);
 }
@@ -275,7 +164,7 @@ float transform_speed_multiplier = 16;
 void AppWindow::onKeyDown(int key)
 {
 
-	float turn_speed = m_delta_time * multiplier;
+	float turn_speed = Time::deltaTime() * multiplier;
 	switch (key) {
 
 		case 'W': dir = 1.f; break;
@@ -363,9 +252,10 @@ void AppWindow::onKeyUp(int key)
 		case 'M': current_cube = min(current_cube + 1, cubes.size()-1); break;
 
 		case '\r':
-			std::cout << "Pos: (" << camera_transform.m_translation.m_x << "," << camera_transform.m_translation.m_y << "," << camera_transform.m_translation.m_z << ")\n";
-			std::cout << "Rot: (" << camera_transform.m_rotation.m_x << "," << camera_transform.m_rotation.m_y << "," << camera_transform.m_rotation.m_z << ")\n";
+			m_screen_capture->CaptureScreen();
 			break;
+
+
 	}
 }
 
@@ -382,8 +272,8 @@ Cube* selected = nullptr;
 void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_pos)
 {
 	
-	xRot -= delta_mouse_point.m_y * m_delta_time * 0.1f ;
-	yRot -= delta_mouse_point.m_x * m_delta_time * 0.1f ;
+	xRot -= delta_mouse_point.m_y * Time::deltaTime() * 0.1f ;
+	yRot -= delta_mouse_point.m_x * Time::deltaTime() * 0.1f ;
 
 	POINT p = {};
 	p.x = mouse_pos.m_x;
