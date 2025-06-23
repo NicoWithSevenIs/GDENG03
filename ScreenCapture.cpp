@@ -48,10 +48,44 @@ void ScreenCapture::CaptureScreen()
 
 bool ScreenCapture::EncodeVideo()
 {
-	
+	isEncoding = true;
+	//Setup Codec
+	const AVCodec* codec = avcodec_find_encoder_by_name("libx264");
+	AVCodecContext* codec_ctx = avcodec_alloc_context3(codec);
 
-	std::cout << "Frames: " << tex.size() << std::endl;
+	DXGI_SWAP_CHAIN_DESC sc_desc = {};
+	m_swap_chain->GetDesc(&sc_desc);
 
+	UINT width = sc_desc.BufferDesc.Width;
+	UINT height = sc_desc.BufferDesc.Height;
+
+	codec_ctx->width = width;
+	codec_ctx->height = height;
+	codec_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+	codec_ctx->time_base = { 1, 60 };
+	codec_ctx->framerate = { 60, 1 };
+
+	avcodec_open2(codec_ctx, codec, nullptr);
+
+
+	//Configure Output
+	AVFormatContext* fmt_ctx;
+	avformat_alloc_output_context2(&fmt_ctx, nullptr, nullptr, "output.mp4");
+	AVStream* stream = avformat_new_stream(fmt_ctx, nullptr);
+	avcodec_parameters_from_context(stream->codecpar, codec_ctx);
+	avio_open(&fmt_ctx->pb, "output.mp4", AVIO_FLAG_WRITE);
+	avformat_write_header(fmt_ctx, nullptr);
+
+
+	//Format Conversion Context
+
+	SwsContext* sws_ctx = sws_getContext(
+		sc_desc.BufferDesc.Width, sc_desc.BufferDesc.Height, AV_PIX_FMT_BGRA,
+		sc_desc.BufferDesc.Width, sc_desc.BufferDesc.Height, AV_PIX_FMT_YUV420P,
+		SWS_BILINEAR, nullptr, nullptr, nullptr
+	);
+
+	//Stage Textures
 	std::vector<ID3D11Texture2D*> staging_tex;
 
 	for (auto i : tex) {
@@ -79,6 +113,77 @@ bool ScreenCapture::EncodeVideo()
 	}
 	std::cout << "Staging Frames: " << staging_tex.size() << std::endl;
 
+	int64_t frame_index = 0;
+
+	//Encode Staged Textures
+
+	for (auto i : staging_tex) {
+
+		D3D11_MAPPED_SUBRESOURCE mapped;
+
+		D3D11_TEXTURE2D_DESC desc = {};
+		i->GetDesc(&desc);
+		HRESULT hr = m_device_context->Map(i, 0, D3D11_MAP_READ, 0, &mapped);
+		
+		BYTE* b = new BYTE[desc.Width * desc.Height * 4];
+		memcpy(b, mapped.pData, desc.Width * desc.Height * 4);
+		UINT row_pitch = mapped.RowPitch;
+
+		m_device_context->Unmap(i, 0);
+		
+		//figure out how to convert from 48b8g8a8 to AV_PIX_FMT_YUV420P
+
+		uint8_t* src_data[4] = { b, nullptr, nullptr, nullptr };
+		int src_linesize[4] = { int(desc.Width * 4), 0, 0, 0 };
+
+		AVFrame* frame = av_frame_alloc();
+		frame->width = codec_ctx->width;
+		frame->height = codec_ctx->height;
+		frame->format = codec_ctx->pix_fmt;
+		av_frame_get_buffer(frame, 32);
+		av_frame_make_writable(frame);
+
+		sws_scale(sws_ctx, src_data, src_linesize, 0, codec_ctx->height, frame->data, frame->linesize);
+
+		frame->pts = frame_index++;
+		avcodec_send_frame(codec_ctx, frame);
+
+		AVPacket* pkt = av_packet_alloc();
+		while (avcodec_receive_packet(codec_ctx, pkt) == 0) {
+			av_interleaved_write_frame(fmt_ctx, pkt);
+			av_packet_unref(pkt);
+		}
+		av_packet_free(&pkt);
+		av_frame_free(&frame);
+
+		delete[] b;
+
+	}
+
+	avcodec_send_frame(codec_ctx, nullptr);
+	AVPacket* pkt = av_packet_alloc();
+	while (avcodec_receive_packet(codec_ctx, pkt) == 0) {
+		av_interleaved_write_frame(fmt_ctx, pkt);
+		av_packet_unref(pkt);
+	}
+	av_packet_free(&pkt);
+
+	// Finalize file
+	av_write_trailer(fmt_ctx);
+
+	for(auto i: tex)
+		i->Release();
+
+	for(auto i: staging_tex)
+		i->Release();
+
+
+	// Free resources
+	avcodec_free_context(&codec_ctx);
+	avio_closep(&fmt_ctx->pb);
+	avformat_free_context(fmt_ctx);
+	sws_freeContext(sws_ctx);
+	isEncoding = false;
 	return true;
 }
 

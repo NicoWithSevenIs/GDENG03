@@ -39,6 +39,9 @@ void AppWindow::OnCreate()
 	RECT rc = this->getClientWindowRect();
 	this->m_swap_chain->init(this->m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
 
+	std::cout << "Height: " << rc.bottom - rc.top <<std::endl;
+	std::cout << "Width: " << rc.right - rc.left << std::endl;
+
 
 	m_screen_capture = new ScreenCapture();
 	m_screen_capture->init(m_swap_chain->get(), GraphicsEngine::get()->getDevice(), 
@@ -122,9 +125,10 @@ void AppWindow::OnUpdate()
 	//if(first)
 		//first = false;
 	
-	m_screen_capture->Update();
+
 	
 	this->m_swap_chain->present(true);
+	m_screen_capture->Update();
 }
 
 void AppWindow::OnDestroy()

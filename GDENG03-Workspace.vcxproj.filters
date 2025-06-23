@@ -75,12 +75,6 @@
     <Filter Include="Source Files\Graphics Engine\Rendering\Screen Capture">
       <UniqueIdentifier>{07cc0c92-e39c-4e47-84ce-b2aac1d8fb9e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="API">
-      <UniqueIdentifier>{b89222e0-2f51-41b9-815d-7cc3c2524630}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="API\FFMPEG">
-      <UniqueIdentifier>{abb41927-04a1-41a6-aeb7-186544e2a76e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App\main.cpp">

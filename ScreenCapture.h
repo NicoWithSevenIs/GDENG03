@@ -1,10 +1,22 @@
 #pragma once
 #include <d3d11.h>
 #include <vector>
-#include <wrl/client.h>
+#include <string>
+
+extern "C" {
+	#include <libavformat/avformat.h>
+	#include <libavcodec/avcodec.h>
+	#include <libavutil/imgutils.h>
+	#include <libavutil/opt.h>
+	#include <libswscale/swscale.h>
+}
 
 class ScreenCapture
-{
+{	
+
+	public:
+		const std::string hw_device_name = "d3d11va";
+
 	private:
 		IDXGISwapChain* m_swap_chain;
 		ID3D11Device* m_d3d_device;
