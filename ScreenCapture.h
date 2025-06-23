@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include <vector>
 #include <string>
+#include <ScreenGrab.h>
 
 extern "C" {
 	#include <libavformat/avformat.h>

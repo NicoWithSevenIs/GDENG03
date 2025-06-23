@@ -48,7 +48,14 @@ void ScreenCapture::CaptureScreen()
 
 bool ScreenCapture::EncodeVideo()
 {
-	isEncoding = true;
+	system("FFMPEG\\bin\\ffmpeg.exe");
+
+	return false;
+}
+
+
+/*
+isEncoding = true;
 	//Setup Codec
 	const AVCodec* codec = avcodec_find_encoder_by_name("libx264");
 	AVCodecContext* codec_ctx = avcodec_alloc_context3(codec);
@@ -124,13 +131,13 @@ bool ScreenCapture::EncodeVideo()
 		D3D11_TEXTURE2D_DESC desc = {};
 		i->GetDesc(&desc);
 		HRESULT hr = m_device_context->Map(i, 0, D3D11_MAP_READ, 0, &mapped);
-		
+
 		BYTE* b = new BYTE[desc.Width * desc.Height * 4];
 		memcpy(b, mapped.pData, desc.Width * desc.Height * 4);
 		UINT row_pitch = mapped.RowPitch;
 
 		m_device_context->Unmap(i, 0);
-		
+
 		//figure out how to convert from 48b8g8a8 to AV_PIX_FMT_YUV420P
 
 		uint8_t* src_data[4] = { b, nullptr, nullptr, nullptr };
@@ -185,5 +192,5 @@ bool ScreenCapture::EncodeVideo()
 	sws_freeContext(sws_ctx);
 	isEncoding = false;
 	return true;
-}
 
+*/
