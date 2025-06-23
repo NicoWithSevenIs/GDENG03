@@ -1,5 +1,7 @@
 #include "ScreenCapture.h"
 
+const std::filesystem::path ScreenCapture::path = "PATH";
+const std::filesystem::path ScreenCapture::output = "OUTPUT";
 
 bool ScreenCapture::init(IDXGISwapChain* swap_chain, ID3D11Device* d3d_device, ID3D11DeviceContext* context)
 {
@@ -10,19 +12,46 @@ bool ScreenCapture::init(IDXGISwapChain* swap_chain, ID3D11Device* d3d_device, I
 	m_d3d_device = d3d_device;
 	m_device_context = context;
 
+	
+	std::filesystem::create_directory(ScreenCapture::output);
+
 	return true;
 }
 
 void ScreenCapture::Update()
 {
-	if(!isRecording || isEncoding)
+	if(!isRecording)
 		return;
 
 	ID3D11Texture2D* buffer = NULL;
 	HRESULT hr = m_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
-	if (!FAILED(hr)) {
-		tex.push_back(buffer);
+
+	if (FAILED(hr)) {
+		std::cout << "Failed to retrieve backbuffer" << std::endl;
+		return;
 	}
+
+	D3D11_TEXTURE2D_DESC desc = {};
+	buffer->GetDesc(&desc);
+
+	ID3D11Texture2D* pStaging;
+
+	desc.BindFlags = 0;
+	desc.MiscFlags &= D3D11_RESOURCE_MISC_TEXTURECUBE;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	desc.Usage = D3D11_USAGE_STAGING;
+
+	hr = m_d3d_device->CreateTexture2D(&desc, nullptr, &pStaging);
+
+	if (FAILED(hr)) {
+		std::cout << "Failed to create Staging Texture" << std::endl;
+		return;
+	}
+
+	m_device_context->CopyResource(pStaging, buffer);
+	tex.push_back(pStaging);
+
+	buffer->Release();
 }
 
 bool ScreenCapture::release()
@@ -35,12 +64,16 @@ bool ScreenCapture::release()
 
 void ScreenCapture::CaptureScreen()
 {
-	if (!isEncoding) {
-		if (isRecording) {
-			EncodeVideo();
-		}
+	if(isEncoding)
+		return;
 
-		isRecording = !isRecording;
+	if (!isRecording) {
+		std::cout << "Recording Started";
+		isRecording = true;
+	}
+	else {
+		EncodeVideo();
+		isRecording = false;
 	}
 }
 
@@ -48,8 +81,31 @@ void ScreenCapture::CaptureScreen()
 
 bool ScreenCapture::EncodeVideo()
 {
-	system("FFMPEG\\bin\\ffmpeg.exe");
+	isEncoding = true;
 
+	std::cout << "Frame Count: " << tex.size() << std::endl;
+
+	std::filesystem::remove_all(ScreenCapture::path);
+	std::filesystem::create_directory(ScreenCapture::path);
+
+	for (int i =0; i < tex.size(); i++) {
+
+		std::string file_name = ScreenCapture::path.string() + "\\" + std::to_string(i) + ".png";
+		std::wstring p(file_name.begin(), file_name.end());
+
+		HRESULT hr = DirectX::SaveWICTextureToFile(m_device_context, tex[i], GUID_ContainerFormatPng, p.c_str(), nullptr, nullptr, true);
+
+		if (FAILED(hr)) {
+			std::cout << "Failed to Create" << std::endl;
+		}
+
+	}
+	system("FFMPEG\\bin\\ffmpeg.exe -framerate 60 -i PATH\\%d.png -c:v libx264 -pix_fmt yuv420p OUTPUT\\out.mp4");
+
+	std::filesystem::remove_all(ScreenCapture::path);
+
+	isEncoding = false;
+	
 	return false;
 }
 

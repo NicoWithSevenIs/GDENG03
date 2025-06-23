@@ -50,6 +50,11 @@ void AppWindow::OnCreate()
 	Cube* c = new Cube();
 	c->load();
 	cubes.push_back(c);
+	c->doOnUpdate = [=]() {
+		c->m_transform.m_rotation.m_x += Time::deltaTime();
+		c->m_transform.m_rotation.m_y += Time::deltaTime();
+		c->m_transform.m_rotation.m_z += Time::deltaTime();
+	};
 
 
 	camera_transform.m_translation = Vector3D(0,0,-3);
@@ -126,9 +131,9 @@ void AppWindow::OnUpdate()
 		//first = false;
 	
 
-	
-	this->m_swap_chain->present(true);
 	m_screen_capture->Update();
+	this->m_swap_chain->present(true);
+
 }
 
 void AppWindow::OnDestroy()
@@ -256,6 +261,7 @@ void AppWindow::onKeyUp(int key)
 		case 'M': current_cube = min(current_cube + 1, cubes.size()-1); break;
 
 		case '\r':
+			
 			m_screen_capture->CaptureScreen();
 			break;
 

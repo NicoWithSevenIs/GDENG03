@@ -2,7 +2,11 @@
 #include <d3d11.h>
 #include <vector>
 #include <string>
+
 #include <ScreenGrab.h>
+#include <wincodec.h>
+#include <filesystem>
+#include <iostream>
 
 extern "C" {
 	#include <libavformat/avformat.h>
@@ -16,7 +20,8 @@ class ScreenCapture
 {	
 
 	public:
-		const std::string hw_device_name = "d3d11va";
+		static const std::filesystem::path path;
+		static const std::filesystem::path output;
 
 	private:
 		IDXGISwapChain* m_swap_chain;
