@@ -2,19 +2,26 @@
 #include <d3d11.h>
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include <ScreenGrab.h>
 #include <wincodec.h>
 #include <filesystem>
-#include <iostream>
 
+//#include <mutex>
+#include <thread>
+
+/*
 extern "C" {
 	#include <libavformat/avformat.h>
 	#include <libavcodec/avcodec.h>
 	#include <libavutil/imgutils.h>
 	#include <libavutil/opt.h>
 	#include <libswscale/swscale.h>
+
 }
+*/
+//extern std::mutex system_call_mutex;
 
 class ScreenCapture
 {	
@@ -40,6 +47,6 @@ class ScreenCapture
 		void CaptureScreen();
 
 	private:
-		bool EncodeVideo();
+		void EncodeVideo();
 };
 

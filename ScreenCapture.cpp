@@ -64,23 +64,29 @@ bool ScreenCapture::release()
 
 void ScreenCapture::CaptureScreen()
 {
-	if(isEncoding)
+	if (isEncoding) {
+		std::cout << "Can't capture screen, currently Encoding" << std::endl;
 		return;
+	}
+		
 
 	if (!isRecording) {
-		std::cout << "Recording Started";
+		std::cout << "Recording Started" << std::endl;
 		isRecording = true;
 	}
 	else {
-		EncodeVideo();
+		std::cout << "Recording Ended. Encoding Video" << std::endl;
+		auto wrapper = [this]() { EncodeVideo(); };
+		std::thread(wrapper).detach();
 		isRecording = false;
 	}
 }
 
-#include <iostream>
 
-bool ScreenCapture::EncodeVideo()
+
+void ScreenCapture::EncodeVideo()
 {
+
 	isEncoding = true;
 
 	std::cout << "Frame Count: " << tex.size() << std::endl;
@@ -100,13 +106,21 @@ bool ScreenCapture::EncodeVideo()
 		}
 
 	}
-	system("FFMPEG\\bin\\ffmpeg.exe -framerate 60 -i PATH\\%d.png -c:v libx264 -pix_fmt yuv420p OUTPUT\\out.mp4");
+
+
+	/*
+		-y overwrite
+		-i batch filename conversion
+		-c codex
+		-pix_fmt picture format
+	*/
+
+	system("FFMPEG\\bin\\ffmpeg.exe -framerate 60 -y -i PATH\\%d.png -c:v libx264 -pix_fmt yuv420p OUTPUT\\out.mp4");
 
 	std::filesystem::remove_all(ScreenCapture::path);
 
 	isEncoding = false;
-	
-	return false;
+
 }
 
 

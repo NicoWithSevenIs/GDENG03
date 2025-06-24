@@ -224,43 +224,9 @@ void AppWindow::onKeyUp(int key)
 		case 'D': r = 0.f;  break;
 		case 'Q': 
 		case 'E': up = 0.f;  break;
-		
-		case '1': 
-			transform_state = 0;
-			std::cout << "Now translating mr. cube" << std::endl;
-		break;
-
-		case '2':
-			transform_state = 1;
-			std::cout << "Now scaling mr. cube" << std::endl;
-			break;
-
-		case '3':
-			transform_state = 2;
-			std::cout << "Now rotating mr. cube" << std::endl;
-			break;
-
-		case 'Z':
-			transform_speed_multiplier /= 2;
-			std::cout << "Halved Transform Speed" << std::endl;
-			break;
-
-		case 'X':
-			transform_speed_multiplier *= 2;
-			std::cout << "Doubled Transform Speed" << std::endl;
-			break;
+	
 
 		case 'R':
-			cubes[current_cube]->m_transform.m_translation = Vector3D();
-			cubes[current_cube]->m_transform.m_scale = Vector3D(1,1,1);
-			cubes[current_cube]->m_transform.m_rotation = Vector3D();
-			std::cout << "Reset mr. cube" << std::endl;
-			break;
-
-		case 'N': current_cube = max(current_cube - 1, 0);break;
-		case 'M': current_cube = min(current_cube + 1, cubes.size()-1); break;
-
-		case '\r':
 			
 			m_screen_capture->CaptureScreen();
 			break;
