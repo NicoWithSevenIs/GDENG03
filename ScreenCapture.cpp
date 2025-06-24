@@ -127,7 +127,6 @@ void ScreenCapture::EncodeVideo()
 
 	}
 
-
 	/*
 		-y overwrite
 		-i batch filename conversion

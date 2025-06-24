@@ -53,5 +53,28 @@ class Transform
 			BuildTransform();
 			return m_transformation_matrix;
 		}
+
+
+		void lookAt(const Vector3D& target)
+		{
+			Vector3D direction;
+			direction.normalize((target - m_translation));
+			float yaw = std::atan2(direction.m_x, direction.m_z);
+			float pitch = std::asin(-direction.m_y);
+
+			m_rotation.m_y = yaw;
+			m_rotation.m_x = pitch;
+		}
+
+		Vector3D getTransform() const
+		{
+			return m_translation;
+		}
+
+		void setTransform(const Vector3D& position)
+		{
+			m_translation = position;
+		}
+
 };
 

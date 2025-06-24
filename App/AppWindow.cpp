@@ -66,8 +66,10 @@ void AppWindow::OnCreate()
 		c->m_transform.m_rotation.m_z += Time::deltaTime();
 	};
 
-
-	camera_transform.m_translation = Vector3D(0,0,-3);
+	m_camera = new Camera();
+	m_camera->m_transform.m_translation = Vector3D(0, 0, -3);
+	m_camera->setSubject(c);
+	//camera_transform.m_translation = Vector3D(0,0,-3);
 
 }
 
@@ -103,6 +105,17 @@ void AppWindow::OnUpdate()
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 
+	Matrix4x4 camera_matrix = this->camera_transform.GetTransformationMatrix();
+	this->camera_transform.m_rotation = Vector3D(xRot, yRot, 0);
+	m_camera->Update(Time::deltaTime(), view_matrix, projection_matrix);
+	//this->camera_transform.m_translation.m_x += Time::deltaTime();
+
+
+	view_matrix = m_camera->getViewMatrix();
+	view_matrix.inverse();
+
+	projection_matrix.setPerspectiveFovLH(fov, width / height, 0.1f, 100.0f);
+
 
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -121,7 +134,7 @@ void AppWindow::OnUpdate()
 	}
 
 
-
+	/*
 	Matrix4x4 camera_matrix = this->camera_transform.GetTransformationMatrix();
 	Vector3D forward = camera_matrix.getLocalZDirection() * Time::deltaTime() * dir;
 	Vector3D right = camera_matrix.getLocalXDirection() * Time::deltaTime() * r;
@@ -130,13 +143,13 @@ void AppWindow::OnUpdate()
 	this->camera_transform.m_rotation = Vector3D(xRot, yRot, 0);
 	
 	//this->camera_transform.m_translation.m_x += Time::deltaTime();
-
+	
 
 	view_matrix = Matrix4x4(this->camera_transform.GetTransformationMatrix());
 	view_matrix.inverse();
 
 	projection_matrix.setPerspectiveFovLH(fov, width/height , 0.1f, 100.0f);
-	
+	*/
 	/*
 	projection_matrix.setOrthoLH(
 		(rc.right - rc.left) / 400.f,
@@ -208,7 +221,7 @@ float transform_speed_multiplier = 16;
 
 void AppWindow::onKeyDown(int key)
 {
-
+	/*
 	float turn_speed = Time::deltaTime() * multiplier;
 	switch (key) {
 
@@ -223,11 +236,12 @@ void AppWindow::onKeyDown(int key)
 
 
 	}
-
+	*/
 }
 
 void AppWindow::onKeyUp(int key)
 {
+	/*
 	switch (key) {
 		case 'W': 
 		case 'S': dir = 0.f;  break;
@@ -244,6 +258,27 @@ void AppWindow::onKeyUp(int key)
 
 
 	}
+	*/
+
+	float move_speed = transform_speed_multiplier * Time::deltaTime();
+	float rot_speed = Time::deltaTime() * multiplier;
+
+	switch (key)
+	{
+	case 'W': m_camera->m_transform.m_translation.m_z -= move_speed; break;
+	case 'S': m_camera->m_transform.m_translation.m_z += move_speed; break;
+	case 'A': m_camera->m_transform.m_translation.m_x += move_speed; break;
+	case 'D': m_camera->m_transform.m_translation.m_x -= move_speed; break;
+	case 'Q': m_camera->m_transform.m_translation.m_y -= move_speed; break;
+	case 'E': m_camera->m_transform.m_translation.m_y += move_speed; break;
+
+	case VK_LEFT:   m_camera->m_transform.m_rotation.m_y -= rot_speed; break;
+	case VK_RIGHT:  m_camera->m_transform.m_rotation.m_y += rot_speed; break;
+	case VK_UP:     m_camera->m_transform.m_rotation.m_x -= rot_speed; break;
+	case VK_DOWN:   m_camera->m_transform.m_rotation.m_x += rot_speed; break;
+	}
+
+	camera_transform.m_rotation.m_x = max(-1.57f, min(1.57f, camera_transform.m_rotation.m_x));
 }
 
 //I got the values of the camera transform  by aiming the camera at a certain angle and position then printing it out and forcing the camera to face that way in each update call
@@ -258,7 +293,7 @@ Cube* selected = nullptr;
 
 void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_pos)
 {
-	
+	/*
 	xRot -= delta_mouse_point.m_y * Time::deltaTime() * 0.1f ;
 	yRot -= delta_mouse_point.m_x * Time::deltaTime() * 0.1f ;
 
@@ -302,14 +337,21 @@ void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_p
 
 
 	//InputSystem::get()->SetCursorPos({ (int) width /2, (int)height /2});
-	
+	*/
+
+	xRot -= delta_mouse_point.m_y * Time::deltaTime() * 0.1f;
+	yRot -= delta_mouse_point.m_x * Time::deltaTime() * 0.1f;
+
+	xRot = std::clamp(xRot, -1.57f, 1.57f);
+
+	m_camera->m_transform.m_rotation = Vector3D(xRot, yRot, 0);
 }
 
 float z_offset = 0;
 
 void AppWindow::onLeftMouseDown(const Point& delta_mouse_point)
 {
-
+	/*
 		return;
 
 	//z_offset -= 0.5;
@@ -325,7 +367,7 @@ void AppWindow::onLeftMouseDown(const Point& delta_mouse_point)
 	std::cout << "(" << newR.m_x << "," << newR.m_y << "," << newR.m_z << ")\n";
 
 
-
+	*/
 }
 
 void AppWindow::onLeftMouseUp(const Point& delta_mouse_point)

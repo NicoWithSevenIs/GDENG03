@@ -15,7 +15,7 @@
 #include "../Game Engine/Graphics Engine/Cube/Cube.h"
 #include "../Quad.h"
 #include "../ScreenCapture.h"
-
+#include "../Camera.h"
 
 class AppWindow : public Window, public InputListener {
 	
@@ -29,6 +29,7 @@ class AppWindow : public Window, public InputListener {
 		Cube* c1;
 		Cube* c2;
 		Quad* q;
+		Camera* m_camera;
 
 	private:
 		unsigned long m_old_time = 0;
