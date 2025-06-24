@@ -7,6 +7,7 @@ bool ScreenCapture::init(IDXGISwapChain* swap_chain, ID3D11Device* d3d_device, I
 {
 	isRecording = false;
 	isEncoding = false;
+	recentlyEncoded = false;
 
 	m_swap_chain = swap_chain;
 	m_d3d_device = d3d_device;
@@ -20,8 +21,24 @@ bool ScreenCapture::init(IDXGISwapChain* swap_chain, ID3D11Device* d3d_device, I
 
 void ScreenCapture::Update()
 {
+
+	OnRecentlyEncoded();
+
+	if (isEncoding) {
+		ImGui::SetNextWindowSize(ImVec2(200, 50));
+		ImGui::Begin("Screen Capture");
+		ImGui::Text("Enconding. Please Hold...");
+		ImGui::End();
+		return;
+	}
+
 	if(!isRecording)
 		return;
+
+	ImGui::SetNextWindowSize(ImVec2(200, 50));
+	ImGui::Begin("Screen Capture");
+	ImGui::Text("Recording...");
+	ImGui::End();
 
 	ID3D11Texture2D* buffer = NULL;
 	HRESULT hr = m_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
@@ -68,11 +85,11 @@ void ScreenCapture::CaptureScreen()
 		std::cout << "Can't capture screen, currently Encoding" << std::endl;
 		return;
 	}
-		
 
 	if (!isRecording) {
 		std::cout << "Recording Started" << std::endl;
 		isRecording = true;
+		recentlyEncoded = false;
 	}
 	else {
 		std::cout << "Recording Ended. Encoding Video" << std::endl;
@@ -120,6 +137,29 @@ void ScreenCapture::EncodeVideo()
 	std::filesystem::remove_all(ScreenCapture::path);
 
 	isEncoding = false;
+	recentlyEncoded = true;
+
+}
+
+void ScreenCapture::OnRecentlyEncoded()
+{
+
+	if(!recentlyEncoded)
+		return;
+	
+	ImGui::SetNextWindowSize(ImVec2(200, 60));
+	ImGui::Begin("Encoding Successful");
+	
+	if (ImGui::Button("Open")) {
+		system("start OUTPUT\\out.mp4");
+		recentlyEncoded = false;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Dismiss")) {
+		recentlyEncoded = false;
+	}
+	
+	ImGui::End();
 
 }
 

@@ -16,6 +16,7 @@
 #include "../Quad.h"
 #include "../ScreenCapture.h"
 
+
 class AppWindow : public Window, public InputListener {
 	
 	private:

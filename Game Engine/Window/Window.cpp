@@ -11,7 +11,13 @@ Window::~Window()
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+
+	extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+		return true;
+
 	switch (msg) {
+		
 	case WM_CREATE:
 		window->setHWND(hwnd);
 		window->OnCreate();
@@ -124,6 +130,9 @@ void Window::OnUpdate()
 void Window::OnDestroy()
 {
 	this->m_is_running = false;
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 }
 
 void Window::OnFocus()

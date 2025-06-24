@@ -11,6 +11,8 @@
 #include <corecrt_math_defines.h>
 #include "../Time.h"
 
+
+
 AppWindow::AppWindow()
 {
 }
@@ -19,14 +21,8 @@ AppWindow::~AppWindow()
 {
 }
 
-int current_cube = 0;
-float t = 0;
-float sign = 1.f;
 
-float x = 0; 
-float y = 0;
-float max_x = 3;
-float max_y = 3;
+
 void AppWindow::OnCreate()
 {
 	Window::OnCreate();
@@ -41,6 +37,20 @@ void AppWindow::OnCreate()
 
 	std::cout << "Height: " << rc.bottom - rc.top <<std::endl;
 	std::cout << "Width: " << rc.right - rc.left << std::endl;
+
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplWin32_Init(m_hwnd);
+	ImGui_ImplDX11_Init(GraphicsEngine::get()->getDevice(), GraphicsEngine::get()->getImmediateDeviceContext()->getContext());
+
+
 
 
 	m_screen_capture = new ScreenCapture();
@@ -61,7 +71,7 @@ void AppWindow::OnCreate()
 
 }
 
-
+#pragma region Spaghetti
 
 bool isMoving = false;
 float dir = 0.f;
@@ -74,6 +84,7 @@ float fov = 1.57f;
 Vector3D ray;
 
 float speed = 0;
+#pragma endregion Spaghetti
 
 
 void AppWindow::OnUpdate()
@@ -91,6 +102,14 @@ void AppWindow::OnUpdate()
 	float height = rc.bottom - rc.top;
 
 	GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
+
+
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	//ImGui::ShowDemoWindow(); // Show demo window! :)
+
 
 
 	Matrix4x4 camera_matrix = this->camera_transform.GetTransformationMatrix();
@@ -117,7 +136,6 @@ void AppWindow::OnUpdate()
 	);
 	*/
 	
-	
 
 	//draw here 
 	for (auto c : cubes) {
@@ -131,8 +149,16 @@ void AppWindow::OnUpdate()
 		//first = false;
 	
 
+
+
 	m_screen_capture->Update();
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 	this->m_swap_chain->present(true);
+
+
 
 }
 
@@ -188,31 +214,6 @@ void AppWindow::onKeyDown(int key)
 
 	}
 
-	Vector3D* to_modify = nullptr;
-
-	switch (transform_state) {
-		case 0: to_modify = &cubes[current_cube]->m_transform.m_translation; break;
-		case 1: to_modify = &cubes[current_cube]->m_transform.m_scale; break;
-		case 2: to_modify = &cubes[current_cube]->m_transform.m_rotation; break;
-	}
-
-	if(!to_modify)
-		return;
-	
-	float transform_speed = transform_speed_multiplier * Time::deltaTime();
-
-	switch (key) {
-		case 'I': to_modify->m_y += transform_speed; break;
-		case 'K': to_modify->m_y -= transform_speed; break;
-		case 'J': to_modify->m_x -= transform_speed; break;
-		case 'L': to_modify->m_x += transform_speed; break;
-		case 'U': to_modify->m_z -= transform_speed; break;
-		case 'O': to_modify->m_z += transform_speed; break;
-	}
-
-	//cubes[current_cube]->m_transform.m_scale.m_x = max(0.1, cubes[current_cube]->m_transform.m_scale.m_x);
-	//cubes[current_cube]->m_transform.m_scale.m_y = max(0.1, cubes[current_cube]->m_transform.m_scale.m_y);
-	//cubes[current_cube]->m_transform.m_scale.m_z = max(0.1, cubes[current_cube]->m_transform.m_scale.m_z);
 }
 
 void AppWindow::onKeyUp(int key)

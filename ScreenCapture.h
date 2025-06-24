@@ -23,6 +23,10 @@ extern "C" {
 */
 //extern std::mutex system_call_mutex;
 
+#include "IMGUI/imgui.h"
+#include "IMGUI/imgui_impl_win32.h"
+#include "IMGUI/imgui_impl_dx11.h"
+
 class ScreenCapture
 {	
 
@@ -39,7 +43,7 @@ class ScreenCapture
 	private:
 		bool isRecording;
 		bool isEncoding;
-
+		bool recentlyEncoded;
 	public:
 		bool init(IDXGISwapChain* swap_chain, ID3D11Device* d3d_device, ID3D11DeviceContext* context);
 		void Update();
@@ -48,5 +52,6 @@ class ScreenCapture
 
 	private:
 		void EncodeVideo();
+		void OnRecentlyEncoded();
 };
 

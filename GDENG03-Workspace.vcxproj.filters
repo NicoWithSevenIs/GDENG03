@@ -75,6 +75,9 @@
     <Filter Include="Source Files\Graphics Engine\Rendering\Screen Capture">
       <UniqueIdentifier>{07cc0c92-e39c-4e47-84ce-b2aac1d8fb9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IMGUI">
+      <UniqueIdentifier>{737c4698-85ec-4faa-8c6a-72b78191a79c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App\main.cpp">
@@ -127,6 +130,24 @@
     </ClCompile>
     <ClCompile Include="ScreenCapture.cpp">
       <Filter>Source Files\Graphics Engine\Rendering\Screen Capture</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_demo.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_draw.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_impl_dx11.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_impl_win32.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_widgets.cpp">
+      <Filter>IMGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +221,30 @@
     <ClInclude Include="ScreenCapture.h">
       <Filter>Source Files\Graphics Engine\Rendering\Screen Capture</Filter>
     </ClInclude>
+    <ClInclude Include="IMGUI\imconfig.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui_impl_dx11.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui_impl_win32.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui_internal.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imstb_rectpack.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imstb_textedit.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imstb_truetype.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader.fx">
@@ -214,5 +259,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="IMGUI\imgui.ini">
+      <Filter>IMGUI</Filter>
+    </None>
   </ItemGroup>
 </Project>
