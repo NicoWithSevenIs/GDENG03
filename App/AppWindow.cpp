@@ -111,6 +111,16 @@ void AppWindow::OnUpdate()
 	//ImGui::ShowDemoWindow(); // Show demo window! :)
 
 
+	if (m_screen_capture->CanPrompt()) {
+		ImGui::SetNextWindowSize(ImVec2(200, 60));
+		ImGui::Begin("Record Window");
+		if (ImGui::Button("Record")) {
+			m_screen_capture->CaptureScreen();
+		}
+		ImGui::End();
+	}
+
+
 
 	Matrix4x4 camera_matrix = this->camera_transform.GetTransformationMatrix();
 	Vector3D forward = camera_matrix.getLocalZDirection() * Time::deltaTime() * dir;
@@ -229,7 +239,7 @@ void AppWindow::onKeyUp(int key)
 
 		case 'R':
 			
-			m_screen_capture->CaptureScreen();
+			//m_screen_capture->CaptureScreen();
 			break;
 
 

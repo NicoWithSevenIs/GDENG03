@@ -44,11 +44,14 @@ class ScreenCapture
 		bool isRecording;
 		bool isEncoding;
 		bool recentlyEncoded;
+
 	public:
 		bool init(IDXGISwapChain* swap_chain, ID3D11Device* d3d_device, ID3D11DeviceContext* context);
 		void Update();
 		bool release();
 		void CaptureScreen();
+
+		bool CanPrompt(){return !isRecording && !recentlyEncoded && !isEncoding;}
 
 	private:
 		void EncodeVideo();

@@ -35,9 +35,12 @@ void ScreenCapture::Update()
 	if(!isRecording)
 		return;
 
-	ImGui::SetNextWindowSize(ImVec2(200, 50));
+	ImGui::SetNextWindowSize(ImVec2(200, 80));
 	ImGui::Begin("Screen Capture");
 	ImGui::Text("Recording...");
+	if (ImGui::Button("Stop Recording")) {
+		CaptureScreen();
+	}
 	ImGui::End();
 
 	ID3D11Texture2D* buffer = NULL;
