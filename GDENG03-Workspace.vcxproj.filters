@@ -78,6 +78,12 @@
     <Filter Include="IMGUI">
       <UniqueIdentifier>{737c4698-85ec-4faa-8c6a-72b78191a79c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Graphics Engine\Camera\Cameras">
+      <UniqueIdentifier>{bf9382cd-8cde-49d2-9775-eda5262cd447}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics Engine\Camera\Cameras\Perspective Camera">
+      <UniqueIdentifier>{c99f5e18-578a-41c3-b023-06dfe14554b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App\main.cpp">
@@ -148,6 +154,12 @@
     </ClCompile>
     <ClCompile Include="IMGUI\imgui_widgets.cpp">
       <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="PerspectiveCamera.cpp">
+      <Filter>Source Files\Graphics Engine\Camera\Cameras\Perspective Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>Source Files\Graphics Engine\Camera\Cameras</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,6 +256,15 @@
     </ClInclude>
     <ClInclude Include="IMGUI\imstb_truetype.h">
       <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Source Files\Graphics Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="PerspectiveCamera.h">
+      <Filter>Source Files\Graphics Engine\Camera\Cameras\Perspective Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>Source Files\Graphics Engine\Camera\Cameras</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="App\AppWindow.cpp" />
     <ClCompile Include="App\main.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\ConstantBuffer\ConstantBuffer.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\Cube\Cube.cpp" />
     <ClCompile Include="Game Engine\Graphics Engine\DeviceContext\DeviceContext.cpp" />
@@ -175,12 +176,14 @@
     <ClCompile Include="IMGUI\imgui_impl_dx11.cpp" />
     <ClCompile Include="IMGUI\imgui_impl_win32.cpp" />
     <ClCompile Include="IMGUI\imgui_widgets.cpp" />
+    <ClCompile Include="PerspectiveCamera.cpp" />
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="ScreenCapture.cpp" />
     <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\AppWindow.h" />
+    <ClInclude Include="CameraManager.h" />
     <ClInclude Include="Game Engine\Graphics Engine\ConstantBuffer\ConstantBuffer.h" />
     <ClInclude Include="Game Engine\Graphics Engine\Cube\Cube.h" />
     <ClInclude Include="Game Engine\Graphics Engine\DeviceContext\DeviceContext.h" />
@@ -200,6 +203,7 @@
     <ClInclude Include="Game Engine\Math\Vector4D.h" />
     <ClInclude Include="Game Engine\Window\Window.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="IMGUI\imconfig.h" />
     <ClInclude Include="IMGUI\imgui.h" />
     <ClInclude Include="IMGUI\imgui_impl_dx11.h" />
@@ -209,6 +213,7 @@
     <ClInclude Include="IMGUI\imstb_textedit.h" />
     <ClInclude Include="IMGUI\imstb_truetype.h" />
     <ClInclude Include="Library\Interfaces\Singleton.h" />
+    <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="Quad.h" />
     <ClInclude Include="ScreenCapture.h" />
     <ClInclude Include="Time.h" />

@@ -59,6 +59,7 @@ void AppWindow::OnCreate()
 
 	Cube* c = new Cube();
 	c->load();
+	c->m_transform.m_translation.m_y += 1.5;
 	cubes.push_back(c);
 	c->doOnUpdate = [=]() {
 		c->m_transform.m_rotation.m_x += Time::deltaTime();
@@ -74,18 +75,18 @@ void AppWindow::OnCreate()
 
 	camera_transform.m_translation = Vector3D(0,0,-3);
 
+	float width = rc.right - rc.left;
+	float height = rc.bottom - rc.top;
+	
+	pc = new PerspectiveCamera(1.57f, width/height);
+	pc->m_transform.m_translation = Vector3D(0, 0, -3);
+
 }
 
 #pragma region Spaghetti
 
 bool isMoving = false;
-float dir = 0.f;
-float r = 0.f;
-float up = 0.f;
 
-Matrix4x4 projection_matrix;
-Matrix4x4 view_matrix;
-float fov = 1.57f;
 Vector3D ray;
 
 float speed = 0;
@@ -127,46 +128,16 @@ void AppWindow::OnUpdate()
 
 
 
-	Matrix4x4 camera_matrix = this->camera_transform.GetTransformationMatrix();
-	Vector3D forward = camera_matrix.getLocalZDirection() * Time::deltaTime() * dir;
-	Vector3D right = camera_matrix.getLocalXDirection() * Time::deltaTime() * r;
-
-	this->camera_transform.m_translation = this->camera_transform.m_translation + forward + right + Vector3D(0, Time::deltaTime() * up, 0);
-	this->camera_transform.m_rotation = Vector3D(xRot, yRot, 0);
-	
-	//this->camera_transform.m_translation.m_x += Time::deltaTime();
+	pc->Update();
 
 
-	view_matrix = Matrix4x4(this->camera_transform.GetTransformationMatrix());
-	view_matrix.inverse();
-
-	projection_matrix.setPerspectiveFovLH(fov, width/height , 0.1f, 100.0f);
-	
-	/*
-	projection_matrix.setOrthoLH(
-		(rc.right - rc.left) / 400.f,
-		(rc.bottom - rc.top) / 400.f,
-		-4.f,
-		4.f
-	);
-	*/
-	
-
-	//draw here 
 	for (auto c : cubes) {
-		c->Update(Time::deltaTime(), view_matrix, projection_matrix);
+		c->Update(Time::deltaTime(), pc->GetViewMatrix(), pc->GetProjectionMatrix());
 		c->Draw();
 	}
 
-	q->Update(Time::deltaTime(), view_matrix, projection_matrix);
+	q->Update(Time::deltaTime(), pc->GetViewMatrix(), pc->GetProjectionMatrix());
 	q->Draw();
-
-
-
-	//if(first)
-		//first = false;
-	
-
 
 
 	m_screen_capture->Update();
@@ -175,8 +146,6 @@ void AppWindow::OnUpdate()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	this->m_swap_chain->present(true);
-
-
 
 }
 
@@ -217,41 +186,13 @@ float transform_speed_multiplier = 16;
 void AppWindow::onKeyDown(int key)
 {
 
-	float turn_speed = Time::deltaTime() * multiplier;
-	switch (key) {
-
-		case 'W': dir = 1.f; break;
-		case 'S': dir = -1.f;  break;
-
-		case 'A': r = -1.f; break;
-		case 'D': r = 1.f;  break;
-		
-		case 'Q': up = -1.f; break;
-		case 'E':  up = 1.f;  break;
-
-
-	}
+	pc->OnKeyDown(key);
 
 }
 
 void AppWindow::onKeyUp(int key)
 {
-	switch (key) {
-		case 'W': 
-		case 'S': dir = 0.f;  break;
-		case 'A': 
-		case 'D': r = 0.f;  break;
-		case 'Q': 
-		case 'E': up = 0.f;  break;
-	
-
-		case 'R':
-			
-			//m_screen_capture->CaptureScreen();
-			break;
-
-
-	}
+	pc->OnKeyUp(key);
 }
 
 //I got the values of the camera transform  by aiming the camera at a certain angle and position then printing it out and forcing the camera to face that way in each update call
@@ -267,8 +208,7 @@ Cube* selected = nullptr;
 void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_pos)
 {
 	
-	xRot -= delta_mouse_point.m_y * Time::deltaTime() * 0.1f ;
-	yRot -= delta_mouse_point.m_x * Time::deltaTime() * 0.1f ;
+	pc->OnMouseMove(delta_mouse_point.m_x, delta_mouse_point.m_y);
 
 	POINT p = {};
 	p.x = mouse_pos.m_x;
@@ -276,8 +216,8 @@ void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_p
 
 	Matrix4x4 inverse_view_proj;
 	inverse_view_proj.SetIdentity();
-	inverse_view_proj *= view_matrix;
-	inverse_view_proj *= projection_matrix;
+	inverse_view_proj *= pc->GetViewMatrix();
+	inverse_view_proj *= pc->GetProjectionMatrix();
 	inverse_view_proj.inverse();
 
 	ScreenToClient(this->m_hwnd, &p);

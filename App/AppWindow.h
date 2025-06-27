@@ -16,6 +16,8 @@
 #include "../Quad.h"
 #include "../ScreenCapture.h"
 
+#include "../PerspectiveCamera.h"
+
 
 class AppWindow : public Window, public InputListener {
 	
@@ -24,6 +26,8 @@ class AppWindow : public Window, public InputListener {
 		ScreenCapture* m_screen_capture;
 		std::vector<Cube*> cubes;
 		Transform camera_transform;
+
+		PerspectiveCamera* pc;
 
 		Cube* c;
 		Cube* c1;
@@ -34,10 +38,6 @@ class AppWindow : public Window, public InputListener {
 		unsigned long m_old_time = 0;
 		float m_delta_time = 0;
 		float m_angle = 0;
-
-		float xRot = 0.f;
-		float yRot = 0.f;
-		float zRot = 0.f;
 
 		float multiplier = 2.f;
 		float scale = 0.1f;

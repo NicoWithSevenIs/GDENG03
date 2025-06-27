@@ -2,6 +2,7 @@
 #include <memory>
 #include "Vector3D.h"
 #include "Vector4D.h"
+#include <iostream>
 
 class Matrix4x4 {
 
@@ -195,5 +196,20 @@ public:
 
 		return transformed;
 	}
+
+
+	void PrintMatrix()
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			std::cout << "[ ";
+			for (int j = 0; j < 4; ++j)
+			{
+				std::cout << m_mat[i][j] << (j < 3 ? ", " : " ");
+			}
+			std::cout << "]" << std::endl;
+		}
+	}
+
 
 };
