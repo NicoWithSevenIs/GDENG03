@@ -67,6 +67,11 @@ void AppWindow::OnCreate()
 	};
 
 
+	q = new Quad();
+	q->load();
+	q->m_transform.m_rotation.m_x = 270 * M_PI / 180;
+	q->m_transform.m_scale = Vector3D(8,8,8);
+
 	camera_transform.m_translation = Vector3D(0,0,-3);
 
 }
@@ -152,6 +157,9 @@ void AppWindow::OnUpdate()
 		c->Update(Time::deltaTime(), view_matrix, projection_matrix);
 		c->Draw();
 	}
+
+	q->Update(Time::deltaTime(), view_matrix, projection_matrix);
+	q->Draw();
 
 
 
