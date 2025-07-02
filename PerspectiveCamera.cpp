@@ -1,7 +1,8 @@
 #include "PerspectiveCamera.h"
 #include "Time.h"
 
-PerspectiveCamera::PerspectiveCamera(float fov, float aspect_ratio): Camera(), m_fov(fov), m_aspect_ratio(aspect_ratio)
+PerspectiveCamera::PerspectiveCamera(float fov, float aspect_ratio): 
+	Camera(), m_fov(fov), m_aspect_ratio(aspect_ratio)
 {
 }
 
@@ -18,7 +19,8 @@ void PerspectiveCamera::Update()
 	Vector3D forward = camera_matrix.getLocalZDirection() * Time::deltaTime() * dir;
 	Vector3D right = camera_matrix.getLocalXDirection() * Time::deltaTime() * r;
 
-	this->m_transform.m_translation = this->m_transform.m_translation + forward + right + Vector3D(0, Time::deltaTime() * up, 0);
+	this->m_transform.m_translation = this->m_transform.m_translation + 
+		forward + right + Vector3D(0, Time::deltaTime() * up, 0);
 	this->m_transform.m_rotation = Vector3D(xRot, yRot, 0);
 }
 

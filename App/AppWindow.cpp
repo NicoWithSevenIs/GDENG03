@@ -61,12 +61,14 @@ void AppWindow::OnCreate()
 	c->load();
 	c->m_transform.m_translation.m_y += 1.5;
 	cubes.push_back(c);
+
+	/*
 	c->doOnUpdate = [=]() {
 		c->m_transform.m_rotation.m_x += Time::deltaTime();
 		c->m_transform.m_rotation.m_y += Time::deltaTime();
 		c->m_transform.m_rotation.m_z += Time::deltaTime();
 	};
-
+	*/
 
 	q = new Quad();
 	q->load();
@@ -79,7 +81,8 @@ void AppWindow::OnCreate()
 	float height = rc.bottom - rc.top;
 	
 	pc = new PerspectiveCamera(1.57f, width/height);
-	pc->m_transform.m_translation = Vector3D(0, 0, -3);
+	pc->m_transform.m_translation = Vector3D(0.0288417, 2.47221, -5.26206);
+	pc->m_transform.m_rotation = Vector3D(-0.4641, 0.00826746, 0);
 
 }
 
@@ -92,6 +95,7 @@ Vector3D ray;
 float speed = 0;
 #pragma endregion Spaghetti
 
+bool show = true;
 
 void AppWindow::OnUpdate()
 {
@@ -115,6 +119,24 @@ void AppWindow::OnUpdate()
 	ImGui::NewFrame();
 
 	//ImGui::ShowDemoWindow(); // Show demo window! :)
+
+	if (show) {
+		ImGui::SetNextWindowSize(ImVec2(350, 200));
+		ImGui::Begin("About");
+		ImGui::Text("Scene Editor Ver. 1.0.0");
+		ImGui::NewLine();
+		ImGui::Text("Developed by: Nico Tolentino");
+		ImGui::NewLine();
+		ImGui::Text("Like Paris in \'45\nThe whole world\'s waiting to come alive\nI know you\'re gonna be there\nI know you\'re gonna be there when it breaks");
+		
+		ImGui::NewLine();
+		if (ImGui::Button("Dismiss")) {
+			show = false;
+		}
+
+		ImGui::End();
+	}
+
 
 
 	if (m_screen_capture->CanPrompt()) {
@@ -185,14 +207,52 @@ float transform_speed_multiplier = 16;
 
 void AppWindow::onKeyDown(int key)
 {
-
 	pc->OnKeyDown(key);
+
+	switch (key) {
+		case 'I': 
+			for (auto i : cubes) {
+				i->m_transform.m_rotation.m_x += Time::deltaTime();
+			}
+		break;
+		case 'K':
+			for (auto i : cubes) {
+				i->m_transform.m_rotation.m_x -= Time::deltaTime();
+			}
+		break;
+		case 'J':
+			for (auto i : cubes) {
+				i->m_transform.m_rotation.m_y -= Time::deltaTime();
+			}
+			break;
+		case 'L':
+			for (auto i : cubes) {
+				i->m_transform.m_rotation.m_y += Time::deltaTime();
+			}
+			break;
+		case 'U':
+			for (auto i : cubes) {
+				i->m_transform.m_rotation.m_z -= Time::deltaTime();
+			}
+			break;
+		case 'O':
+			for (auto i : cubes) {
+				i->m_transform.m_rotation.m_z += Time::deltaTime();
+			}
+			break;
+
+	}
 
 }
 
 void AppWindow::onKeyUp(int key)
 {
 	pc->OnKeyUp(key);
+	if (key == 'R') {
+		std::cout << "Pos: (" << pc->m_transform.m_translation.m_x << "," << pc->m_transform.m_translation.m_y << "," << pc->m_transform.m_translation.m_z << ")\n";
+		std::cout << "Rot: (" << pc->m_transform.m_rotation.m_x << "," << pc->m_transform.m_rotation.m_y << "," << pc->m_transform.m_rotation.m_z << ")\n";
+	}
+
 }
 
 //I got the values of the camera transform  by aiming the camera at a certain angle and position then printing it out and forcing the camera to face that way in each update call
@@ -205,9 +265,9 @@ Vector3D rayorigin;
 
 Cube* selected = nullptr;
 
-void AppWindow::onMouseMove(const Point& delta_mouse_point, const Point& mouse_pos)
+void AppWindow::onMouseMove(const Point& delta_mouse_point,
+	const Point& mouse_pos)
 {
-	
 	pc->OnMouseMove(delta_mouse_point.m_x, delta_mouse_point.m_y);
 
 	POINT p = {};

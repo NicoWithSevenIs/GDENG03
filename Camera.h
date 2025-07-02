@@ -11,7 +11,6 @@ class Camera {
 		Transform m_transform;
 
 	public:
-		//virtual void GetViewProjMat(Matrix4x4* view_matrix, Matrix4x4** proj_matrix) = 0;
 		inline virtual Matrix4x4 GetViewMatrix() {
 			Matrix4x4 mat = Matrix4x4(this->m_transform.GetTransformationMatrix());
 			mat.inverse();
